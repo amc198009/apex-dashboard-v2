@@ -268,7 +268,7 @@ function PositionLimitsCard({ openCount }: { openCount: number }) {
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function PositionsPage() {
-  const { trades, bankroll } = useApex();
+  const { trades, bankroll, health } = useApex();
 
   const openTrades = trades.filter(isOpen);
   const openCount = openTrades.length;
@@ -290,7 +290,7 @@ export default function PositionsPage() {
               <SectionTitle>Category Exposure</SectionTitle>
               <ExposureChart
                 trades={trades}
-                bankroll={bankroll?.current ?? 0}
+                bankroll={bankroll?.current ?? health?.walletBalance ?? 0}
                 categoryCap={RISK.maxCategoryPct}
               />
             </Card>

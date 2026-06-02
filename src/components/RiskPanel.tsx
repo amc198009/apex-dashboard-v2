@@ -8,18 +8,28 @@ import { totalExposure, exposureByCategory, isOpen } from '../lib/analytics';
 import { usd, pct } from '../lib/format';
 
 // Live monitor of the hard risk constraints vs. current portfolio state.
+const tone = (s: 'safe' | 'warn' | 'breach') =>
+  s === 'breach' ? 'text-apex-red' : s === 'warn' ? 'text-apex-amber' : 'text-white/70';
+
+type Row =
+  | { kind: 'pct'; label: string; pct: number; usdc: number; cap: number }
+  | { kind: 'count'; label: string; value: number; cap: number };
+
 export function RiskPanel({ compact = false }: { compact?: boolean }) {
   const { trades, bankroll, health } = useApex();
-  const bank = bankroll?.current ?? 0;
+  // Prefer the live bankroll; fall back to the backend-provided wallet balance
+  // so exposure gauges stay meaningful when the optional /bankroll feed is down.
+  const bank = bankroll?.current ?? health?.walletBalance ?? 0;
+  const hasDenominator = bank > 0;
   const exposure = totalExposure(trades, bank);
   const categories = exposureByCategory(trades, bank);
   const openCount = trades.filter(isOpen).length;
   const topCategory = categories[0];
 
-  const constraints: { label: string; value: number; cap: number; fmt: (v: number) => string }[] = [
-    { label: 'Portfolio exposure', value: exposure.pct, cap: RISK.maxPortfolioPct, fmt: v => pct(v, 1) },
-    { label: 'Top category', value: topCategory?.pct ?? 0, cap: RISK.maxCategoryPct, fmt: v => pct(v, 1) },
-    { label: 'Concurrent positions', value: openCount, cap: RISK.maxConcurrent, fmt: v => `${v}` },
+  const rows: Row[] = [
+    { kind: 'pct', label: 'Portfolio exposure', pct: exposure.pct, usdc: exposure.usdc, cap: RISK.maxPortfolioPct },
+    { kind: 'pct', label: 'Top category', pct: topCategory?.pct ?? 0, usdc: topCategory?.usdc ?? 0, cap: RISK.maxCategoryPct },
+    { kind: 'count', label: 'Concurrent positions', value: openCount, cap: RISK.maxConcurrent },
   ];
 
   return (
@@ -31,18 +41,46 @@ export function RiskPanel({ compact = false }: { compact?: boolean }) {
       }>Risk Monitor</SectionTitle>
 
       <div className="space-y-4">
-        {constraints.map(c => {
-          const ratio = utilization(c.value, c.cap);
-          const status = utilStatus(ratio);
+        {rows.map(r => {
+          if (r.kind === 'count') {
+            const status = utilStatus(utilization(r.value, r.cap));
+            return (
+              <div key={r.label}>
+                <div className="flex justify-between text-[10px] mb-1.5">
+                  <span className="text-white/45">{r.label}</span>
+                  <span className={clsx('tabular-nums', tone(status))}>
+                    {r.value} <span className="text-white/25">/ {r.cap}</span>
+                  </span>
+                </div>
+                <ProgressBar value={r.value} max={r.cap} status={status} />
+              </div>
+            );
+          }
+          // Percentage rows need a bankroll/wallet denominator. Without one we
+          // must NOT show a false "safe 0%" — surface the absolute exposure and
+          // an indeterminate (amber) gauge instead.
+          const hasExposure = r.usdc > 0;
+          const indeterminate = !hasDenominator && hasExposure;
+          const status = indeterminate ? 'warn' : utilStatus(utilization(r.pct, r.cap));
           return (
-            <div key={c.label}>
+            <div key={r.label}>
               <div className="flex justify-between text-[10px] mb-1.5">
-                <span className="text-white/45">{c.label}</span>
-                <span className={clsx('tabular-nums', status === 'breach' ? 'text-apex-red' : status === 'warn' ? 'text-apex-amber' : 'text-white/70')}>
-                  {c.fmt(c.value)} <span className="text-white/25">/ {c.fmt(c.cap)}</span>
+                <span className="text-white/45">{r.label}</span>
+                <span className={clsx('tabular-nums', tone(status))}>
+                  {hasDenominator
+                    ? <>{pct(r.pct, 1)} <span className="text-white/25">/ {pct(r.cap, 0)}</span></>
+                    : hasExposure
+                      ? <>{usd(r.usdc)} <span className="text-apex-amber/70">· bankroll n/a</span></>
+                      : <>{pct(0, 1)} <span className="text-white/25">/ {pct(r.cap, 0)}</span></>}
                 </span>
               </div>
-              <ProgressBar value={c.value} max={c.cap} status={status} />
+              {indeterminate ? (
+                <div className="h-1.5 w-full rounded-full bg-apex-amber/15 overflow-hidden">
+                  <div className="h-full w-1/3 rounded-full bg-apex-amber/60 animate-pulse-soft" />
+                </div>
+              ) : (
+                <ProgressBar value={r.pct} max={r.cap} status={status} />
+              )}
             </div>
           );
         })}
