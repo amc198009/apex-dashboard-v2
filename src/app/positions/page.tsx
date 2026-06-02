@@ -26,16 +26,16 @@ function OpenPositionsTable({ trades }: { trades: Trade[] }) {
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-[11px]">
+      <table className="w-full">
         <thead>
-          <tr className="text-[9px] tracking-[0.15em] text-white/30 uppercase border-b border-white/8">
-            <th className="py-2.5 px-2 text-left font-normal">Market</th>
-            <th className="py-2.5 px-2 text-left font-normal">Dir</th>
-            <th className="py-2.5 px-2 text-right font-normal tabular-nums">Entry</th>
-            <th className="py-2.5 px-2 text-right font-normal tabular-nums">Size</th>
-            <th className="py-2.5 px-2 text-right font-normal tabular-nums">Edge</th>
-            <th className="py-2.5 px-2 text-right font-normal">Resolves</th>
-            <th className="py-2.5 px-2 text-left font-normal">Status</th>
+          <tr className="text-left text-[11px] font-medium text-white/40 border-b border-white/[0.06]">
+            <th className="px-4 py-3 font-medium">Market</th>
+            <th className="px-4 py-3 font-medium">Dir</th>
+            <th className="px-4 py-3 font-medium text-right">Entry</th>
+            <th className="px-4 py-3 font-medium text-right">Size</th>
+            <th className="px-4 py-3 font-medium text-right">Edge</th>
+            <th className="px-4 py-3 font-medium text-right">Resolves</th>
+            <th className="px-4 py-3 font-medium">Status</th>
           </tr>
         </thead>
         <tbody>
@@ -44,26 +44,26 @@ function OpenPositionsTable({ trades }: { trades: Trade[] }) {
             return (
               <tr
                 key={t.id}
-                className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
+                className="border-b border-white/[0.04] last:border-0 hover:bg-white/[0.02] transition-colors"
               >
                 {/* MARKET */}
-                <td className="py-3 px-2 max-w-[260px]">
+                <td className="px-4 py-3.5 text-[13px] max-w-[260px]">
                   <div className="truncate text-white/80 leading-tight" title={t.question}>
                     {t.question}
                   </div>
-                  <div className="text-[9px] text-white/30 mt-0.5 tracking-wider">
+                  <div className="text-[11px] text-white/40 mt-0.5">
                     {t.category}
                     {t.signalTier != null && (
-                      <span className="ml-1.5 text-white/20">T{t.signalTier}</span>
+                      <span className="ml-1.5 text-white/25">T{t.signalTier}</span>
                     )}
                   </div>
                 </td>
 
                 {/* DIR */}
-                <td className="py-3 px-2">
+                <td className="px-4 py-3.5 text-[13px]">
                   <span
                     className={clsx(
-                      'text-[10px] font-semibold tracking-wider',
+                      'font-semibold',
                       t.direction === 'YES' ? 'text-apex-green' : 'text-apex-red',
                     )}
                   >
@@ -72,14 +72,14 @@ function OpenPositionsTable({ trades }: { trades: Trade[] }) {
                 </td>
 
                 {/* ENTRY */}
-                <td className="py-3 px-2 text-right tabular-nums text-white/70">
+                <td className="px-4 py-3.5 text-[13px] text-right tnum text-white/70">
                   {cents(t.entryPrice)}
                 </td>
 
                 {/* SIZE + unrealized P&L */}
-                <td className="py-3 px-2 text-right tabular-nums">
+                <td className="px-4 py-3.5 text-[13px] text-right tnum">
                   <div className="text-white/80">{usd(t.allocationUsdc)}</div>
-                  <div className="text-[9px] text-white/30">
+                  <div className="text-[11px] text-white/40">
                     {pct(t.allocationPct, 2)}
                     {upnl != null && (
                       <span className={clsx('ml-1.5', pnlColor(upnl))}>
@@ -92,7 +92,7 @@ function OpenPositionsTable({ trades }: { trades: Trade[] }) {
                 {/* EDGE */}
                 <td
                   className={clsx(
-                    'py-3 px-2 text-right tabular-nums',
+                    'px-4 py-3.5 text-[13px] text-right tnum',
                     t.netEdge >= 0 ? 'text-apex-green' : 'text-apex-red',
                   )}
                 >
@@ -100,12 +100,12 @@ function OpenPositionsTable({ trades }: { trades: Trade[] }) {
                 </td>
 
                 {/* RESOLVES */}
-                <td className="py-3 px-2 text-right tabular-nums text-white/50">
+                <td className="px-4 py-3.5 text-[13px] text-right tnum text-white/50">
                   {durationUntil(t.resolutionDate)}
                 </td>
 
                 {/* STATUS */}
-                <td className="py-3 px-2">
+                <td className="px-4 py-3.5 text-[13px]">
                   <StatusBadge status={t.status} />
                 </td>
               </tr>
@@ -135,37 +135,37 @@ function ClosedHistoryTable({ trades }: { trades: Trade[] }) {
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-[11px]">
+      <table className="w-full">
         <thead>
-          <tr className="text-[9px] tracking-[0.15em] text-white/30 uppercase border-b border-white/8">
-            <th className="py-2.5 px-2 text-left font-normal">Market</th>
-            <th className="py-2.5 px-2 text-left font-normal">Dir</th>
-            <th className="py-2.5 px-2 text-right font-normal tabular-nums">Exit</th>
-            <th className="py-2.5 px-2 text-right font-normal tabular-nums">P&amp;L</th>
-            <th className="py-2.5 px-2 text-left font-normal">Reason</th>
+          <tr className="text-left text-[11px] font-medium text-white/40 border-b border-white/[0.06]">
+            <th className="px-4 py-3 font-medium">Market</th>
+            <th className="px-4 py-3 font-medium">Dir</th>
+            <th className="px-4 py-3 font-medium text-right">Exit</th>
+            <th className="px-4 py-3 font-medium text-right">P&amp;L</th>
+            <th className="px-4 py-3 font-medium">Reason</th>
           </tr>
         </thead>
         <tbody>
           {closed.map((t) => (
             <tr
               key={t.id}
-              className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
+              className="border-b border-white/[0.04] last:border-0 hover:bg-white/[0.02] transition-colors"
             >
               {/* MARKET */}
-              <td className="py-3 px-2 max-w-[280px]">
+              <td className="px-4 py-3.5 text-[13px] max-w-[280px]">
                 <div className="truncate text-white/70 leading-tight" title={t.question}>
                   {t.question}
                 </div>
-                <div className="text-[9px] text-white/25 mt-0.5 tracking-wider">
+                <div className="text-[11px] text-white/40 mt-0.5">
                   {t.category}
                 </div>
               </td>
 
               {/* DIR */}
-              <td className="py-3 px-2">
+              <td className="px-4 py-3.5 text-[13px]">
                 <span
                   className={clsx(
-                    'text-[10px] font-semibold tracking-wider',
+                    'font-semibold',
                     t.direction === 'YES' ? 'text-apex-green' : 'text-apex-red',
                   )}
                 >
@@ -174,17 +174,17 @@ function ClosedHistoryTable({ trades }: { trades: Trade[] }) {
               </td>
 
               {/* EXIT */}
-              <td className="py-3 px-2 text-right tabular-nums text-white/50">
+              <td className="px-4 py-3.5 text-[13px] text-right tnum text-white/50">
                 {t.exitPrice != null ? cents(t.exitPrice) : '—'}
               </td>
 
               {/* P&L */}
-              <td className={clsx('py-3 px-2 text-right tabular-nums font-semibold', pnlColor(t.pnl ?? null))}>
+              <td className={clsx('px-4 py-3.5 text-[13px] text-right tnum font-semibold', pnlColor(t.pnl ?? null))}>
                 {t.pnl != null ? signedUsd(t.pnl) : '—'}
               </td>
 
               {/* REASON */}
-              <td className="py-3 px-2 text-white/35 text-[10px] tracking-wide uppercase">
+              <td className="px-4 py-3.5 text-[13px] text-white/40">
                 {t.closeReason ?? '—'}
               </td>
             </tr>
@@ -209,28 +209,28 @@ function PositionLimitsCard({ openCount }: { openCount: number }) {
 
   return (
     <Card className="p-5">
-      <SectionTitle>Position Limits</SectionTitle>
+      <SectionTitle>Position limits</SectionTitle>
       <div className="space-y-3">
         {/* Open / Max row */}
-        <div className="flex items-center justify-between text-[11px]">
-          <span className="text-white/40 tracking-wide">Open / Max</span>
-          <span className={clsx('font-semibold tabular-nums font-mono', limitColor)}>
+        <div className="flex items-center justify-between">
+          <span className="text-[12px] text-white/45">Open / Max</span>
+          <span className={clsx('text-2xl font-semibold tnum', limitColor)}>
             {openCount} / {cap}
           </span>
         </div>
 
         {/* Portfolio cap row */}
-        <div className="flex items-center justify-between text-[11px]">
-          <span className="text-white/40 tracking-wide">Portfolio Cap</span>
-          <span className="text-white/60 tabular-nums font-mono">
+        <div className="flex items-center justify-between">
+          <span className="text-[12px] text-white/45">Portfolio cap</span>
+          <span className="text-[13px] tnum text-white/60">
             {pct(RISK.maxPortfolioPct, 0)}
           </span>
         </div>
 
         {/* Category cap row */}
-        <div className="flex items-center justify-between text-[11px]">
-          <span className="text-white/40 tracking-wide">Category Cap</span>
-          <span className="text-white/60 tabular-nums font-mono">
+        <div className="flex items-center justify-between">
+          <span className="text-[12px] text-white/45">Category cap</span>
+          <span className="text-[13px] tnum text-white/60">
             {pct(RISK.maxCategoryPct, 0)}
           </span>
         </div>
@@ -253,7 +253,7 @@ function PositionLimitsCard({ openCount }: { openCount: number }) {
         </div>
 
         {/* Note */}
-        <p className="text-[9px] text-white/20 tracking-wide leading-relaxed pt-1">
+        <p className="text-[11px] text-white/40 leading-relaxed pt-1">
           {ratio >= 1
             ? 'Position cap reached — new trades blocked until a position closes.'
             : ratio >= 0.8
@@ -274,20 +274,20 @@ export default function PositionsPage() {
   const openCount = openTrades.length;
 
   return (
-    <div className="min-h-screen bg-[#080808] font-mono text-white">
+    <div className="min-h-screen bg-[#080808] text-white">
       <TopBar
-        title="POSITIONS"
+        title="Positions"
         subtitle="Live open positions & risk constraints"
       />
 
-      <div className="px-6 py-6 max-w-[1400px] mx-auto space-y-6">
+      <div className="px-8 py-8 max-w-[1400px] mx-auto space-y-8">
         {/* ── Main grid ─────────────────────────────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* LEFT column */}
           <div className="lg:col-span-2 space-y-6">
             {/* Category Exposure chart */}
             <Card className="p-5">
-              <SectionTitle>Category Exposure</SectionTitle>
+              <SectionTitle>Category exposure</SectionTitle>
               <ExposureChart
                 trades={trades}
                 bankroll={bankroll?.current ?? health?.walletBalance ?? 0}
@@ -299,12 +299,12 @@ export default function PositionsPage() {
             <div>
               <SectionTitle
                 right={
-                  <span className="text-[9px] text-white/25 tabular-nums">
+                  <span className="text-[11px] text-white/40 tnum">
                     {openCount} position{openCount !== 1 ? 's' : ''}
                   </span>
                 }
               >
-                Open Positions
+                Open positions
               </SectionTitle>
               <Card>
                 <OpenPositionsTable trades={trades} />
@@ -323,12 +323,12 @@ export default function PositionsPage() {
         <div>
           <SectionTitle
             right={
-              <span className="text-[9px] text-white/25 tabular-nums">
+              <span className="text-[11px] text-white/40 tnum">
                 {trades.filter(isClosed).length} total
               </span>
             }
           >
-            Closed History
+            Closed history
           </SectionTitle>
           <Card>
             <ClosedHistoryTable trades={trades} />

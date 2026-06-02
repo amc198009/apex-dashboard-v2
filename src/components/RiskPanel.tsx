@@ -35,8 +35,8 @@ export function RiskPanel({ compact = false }: { compact?: boolean }) {
   return (
     <Card className="p-5" glow={health?.drawdownActive ? 'red' : 'none'}>
       <SectionTitle right={
-        <span className={clsx('text-[9px] tracking-[0.15em]', health?.drawdownActive ? 'text-apex-red' : 'text-apex-green')}>
-          {health?.drawdownActive ? '◉ DRAWDOWN' : '◉ NOMINAL'}
+        <span className={clsx('inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-full', health?.drawdownActive ? 'text-apex-red bg-apex-red/10 ring-1 ring-apex-red/25' : 'text-apex-green bg-apex-green/10 ring-1 ring-apex-green/25')}>
+          ● {health?.drawdownActive ? 'Drawdown' : 'Nominal'}
         </span>
       }>Risk Monitor</SectionTitle>
 
@@ -46,10 +46,10 @@ export function RiskPanel({ compact = false }: { compact?: boolean }) {
             const status = utilStatus(utilization(r.value, r.cap));
             return (
               <div key={r.label}>
-                <div className="flex justify-between text-[10px] mb-1.5">
-                  <span className="text-white/45">{r.label}</span>
-                  <span className={clsx('tabular-nums', tone(status))}>
-                    {r.value} <span className="text-white/25">/ {r.cap}</span>
+                <div className="flex justify-between text-[12px] mb-2">
+                  <span className="text-white/50">{r.label}</span>
+                  <span className={clsx('tnum font-medium', tone(status))}>
+                    {r.value} <span className="text-white/30">/ {r.cap}</span>
                   </span>
                 </div>
                 <ProgressBar value={r.value} max={r.cap} status={status} />
@@ -64,9 +64,9 @@ export function RiskPanel({ compact = false }: { compact?: boolean }) {
           const status = indeterminate ? 'warn' : utilStatus(utilization(r.pct, r.cap));
           return (
             <div key={r.label}>
-              <div className="flex justify-between text-[10px] mb-1.5">
-                <span className="text-white/45">{r.label}</span>
-                <span className={clsx('tabular-nums', tone(status))}>
+              <div className="flex justify-between text-[12px] mb-2">
+                <span className="text-white/50">{r.label}</span>
+                <span className={clsx('tnum font-medium', tone(status))}>
                   {hasDenominator
                     ? <>{pct(r.pct, 1)} <span className="text-white/25">/ {pct(r.cap, 0)}</span></>
                     : hasExposure
@@ -87,7 +87,7 @@ export function RiskPanel({ compact = false }: { compact?: boolean }) {
       </div>
 
       {!compact && (
-        <div className="mt-5 pt-4 border-t border-white/8 grid grid-cols-2 gap-y-2 gap-x-4 text-[10px]">
+        <div className="mt-5 pt-5 border-t border-white/[0.06] grid grid-cols-2 gap-y-2.5 gap-x-4 text-[12px]">
           <Constraint label="Min net edge" value={pct(RISK.minNetEdge, 0)} />
           <Constraint label="Max single" value={pct(RISK.maxSinglePct, 0)} />
           <Constraint label="Max correlated" value={pct(RISK.maxCorrelatedPct, 0)} />
@@ -98,9 +98,9 @@ export function RiskPanel({ compact = false }: { compact?: boolean }) {
       )}
 
       {bankroll && (
-        <div className="mt-4 pt-4 border-t border-white/8 flex justify-between text-[10px]">
-          <span className="text-white/40">Liquid reserve (20%)</span>
-          <span className="text-white/70 tabular-nums">{usd(bankroll.reserveAmount)}</span>
+        <div className="mt-4 pt-4 border-t border-white/[0.06] flex justify-between text-[12px]">
+          <span className="text-white/45">Liquid reserve (20%)</span>
+          <span className="text-white/75 tnum font-medium">{usd(bankroll.reserveAmount)}</span>
         </div>
       )}
     </Card>
@@ -110,8 +110,8 @@ export function RiskPanel({ compact = false }: { compact?: boolean }) {
 function Constraint({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between">
-      <span className="text-white/35">{label}</span>
-      <span className="text-white/65 tabular-nums">{value}</span>
+      <span className="text-white/40">{label}</span>
+      <span className="text-white/70 tnum font-medium">{value}</span>
     </div>
   );
 }

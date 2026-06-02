@@ -56,32 +56,32 @@ export default function MarketsPage() {
     : [];
 
   return (
-    <div className="min-h-screen bg-black text-white font-mono">
+    <div className="min-h-screen bg-black text-white">
       <TopBar
-        title="MARKETS"
+        title="Markets"
         subtitle="Polymarket scan funnel & candidate evaluation"
       />
 
-      <div className="px-6 py-6 max-w-[1400px] mx-auto space-y-6">
+      <div className="px-8 py-8 max-w-[1400px] mx-auto space-y-8">
 
         {/* Funnel StatTiles */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <StatTile
-            label="SCANNED"
+            label="Scanned"
             value={num(scanned)}
           />
           <StatTile
-            label="QUALIFIED"
+            label="Qualified"
             value={num(qualified)}
             accent="green"
           />
           <StatTile
-            label="DISQUALIFIED"
+            label="Disqualified"
             value={num(disqualified)}
             accent="red"
           />
           <StatTile
-            label="QUALIFY RATE"
+            label="Qualify rate"
             value={qualifyRate}
           />
         </div>
@@ -89,31 +89,31 @@ export default function MarketsPage() {
         {/* Filter Criteria Card */}
         <Card className="p-5">
           <div className="mb-3">
-            <span className="text-[9px] tracking-[0.15em] text-white/30 uppercase">
-              Hard Filter Criteria
+            <span className="text-[11px] text-white/40 font-medium">
+              Hard filter criteria
             </span>
           </div>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between border-b border-white/5 pb-2">
-              <span className="text-[11px] text-white/60">Min Liquidity</span>
+          <div className="divide-y divide-white/[0.06]">
+            <div className="flex items-center justify-between py-2 text-[13px]">
+              <span className="text-white/55">Min liquidity</span>
               <Badge className="text-apex-amber border-apex-amber/30 bg-apex-amber/10">
                 {usd(RISK.minLiquidity, 0)}
               </Badge>
             </div>
-            <div className="flex items-center justify-between border-b border-white/5 pb-2">
-              <span className="text-[11px] text-white/60">Min Time to Resolution</span>
+            <div className="flex items-center justify-between py-2 text-[13px]">
+              <span className="text-white/55">Min time to resolution</span>
               <Badge className="text-apex-amber border-apex-amber/30 bg-apex-amber/10">
                 {RISK.minHoursToResolution}h
               </Badge>
             </div>
-            <div className="flex items-center justify-between pb-2">
-              <span className="text-[11px] text-white/60">Min Net Edge</span>
+            <div className="flex items-center justify-between py-2 text-[13px]">
+              <span className="text-white/55">Min net edge</span>
               <Badge className="text-apex-amber border-apex-amber/30 bg-apex-amber/10">
                 {(RISK.minNetEdge * 100).toFixed(0)}%
               </Badge>
             </div>
           </div>
-          <p className="mt-3 text-[10px] text-white/30 leading-relaxed">
+          <p className="text-[12px] text-white/40 leading-relaxed mt-2">
             A 100% disqualification rate usually points at the liquidity floor or a field-parsing
             issue in the backend market filter (Layer 4).
           </p>
@@ -130,7 +130,7 @@ export default function MarketsPage() {
                   onClick={load}
                   disabled={loading}
                 >
-                  {loading ? <Spinner className="w-3 h-3" /> : 'REFRESH'}
+                  {loading ? <Spinner className="w-3 h-3" /> : 'Refresh'}
                 </Button>
                 <Button
                   variant="accent"
@@ -138,19 +138,19 @@ export default function MarketsPage() {
                   onClick={handleTriggerScan}
                   disabled={scanning || loading}
                 >
-                  {scanning ? <Spinner className="w-3 h-3" /> : 'TRIGGER FULL SCAN'}
+                  {scanning ? <Spinner className="w-3 h-3" /> : 'Trigger full scan'}
                 </Button>
               </div>
             }
           >
-            Scan Candidates
+            Scan candidates
           </SectionTitle>
 
           {/* Loading state — no data yet */}
           {loading && preview === null && (
-            <div className="flex items-center justify-center gap-2 py-12 text-white/40 text-[11px]">
+            <div className="flex items-center justify-center gap-2 py-20 text-white/40 text-[13px]">
               <Spinner className="w-4 h-4" />
-              <span>loading…</span>
+              <span>Loading…</span>
             </div>
           )}
 
@@ -159,7 +159,7 @@ export default function MarketsPage() {
             <EmptyState>
               <div className="space-y-1">
                 <div className="text-apex-red">{err}</div>
-                <div className="text-white/30 text-[10px]">
+                <div className="text-white/40 text-[12px]">
                   The backend <code className="text-white/50">/scan</code> endpoint may be
                   unavailable. This is expected if{' '}
                   <code className="text-white/50">NEXT_PUBLIC_APEX_API</code> is not set or the
@@ -171,23 +171,23 @@ export default function MarketsPage() {
 
           {/* Candidates table */}
           {!loading && err === null && candidates.length > 0 && (
-            <div className="overflow-x-auto border border-white/8 rounded-md">
+            <Card className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-white/8">
-                    <th className="text-left py-2.5 px-2 text-[9px] tracking-[0.15em] text-white/30 uppercase font-normal">
+                  <tr className="text-left text-[11px] font-medium text-white/40 border-b border-white/[0.06]">
+                    <th className="px-4 py-3 font-medium">
                       Market
                     </th>
-                    <th className="text-left py-2.5 px-2 text-[9px] tracking-[0.15em] text-white/30 uppercase font-normal">
+                    <th className="px-4 py-3 font-medium">
                       Category
                     </th>
-                    <th className="text-right py-2.5 px-2 text-[9px] tracking-[0.15em] text-white/30 uppercase font-normal">
+                    <th className="px-4 py-3 font-medium text-right">
                       Liquidity
                     </th>
-                    <th className="text-right py-2.5 px-2 text-[9px] tracking-[0.15em] text-white/30 uppercase font-normal">
+                    <th className="px-4 py-3 font-medium text-right">
                       Yes / No
                     </th>
-                    <th className="text-right py-2.5 px-2 text-[9px] tracking-[0.15em] text-white/30 uppercase font-normal">
+                    <th className="px-4 py-3 font-medium text-right">
                       Resolves
                     </th>
                   </tr>
@@ -202,10 +202,10 @@ export default function MarketsPage() {
                     return (
                       <tr
                         key={marketKey}
-                        className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
+                        className="border-b border-white/[0.04] last:border-0 hover:bg-white/[0.02] transition-colors"
                       >
                         {/* Market question */}
-                        <td className="py-2.5 px-2 text-[11px] max-w-[320px]">
+                        <td className="px-4 py-3.5 text-[13px] max-w-[320px]">
                           <span
                             className="block truncate text-white/80"
                             title={label !== '—' ? label : undefined}
@@ -215,14 +215,14 @@ export default function MarketsPage() {
                         </td>
 
                         {/* Category */}
-                        <td className="py-2.5 px-2 text-[11px] text-white/50">
+                        <td className="px-4 py-3.5 text-[13px] text-white/50">
                           {c.category ?? '—'}
                         </td>
 
                         {/* Liquidity */}
                         <td
                           className={clsx(
-                            'py-2.5 px-2 text-[11px] text-right tabular-nums',
+                            'px-4 py-3.5 text-[13px] tnum text-right',
                             isLowLiquidity ? 'text-apex-red' : 'text-white/80'
                           )}
                         >
@@ -230,7 +230,7 @@ export default function MarketsPage() {
                         </td>
 
                         {/* Yes / No prices */}
-                        <td className="py-2.5 px-2 text-[11px] text-right tabular-nums text-white/70">
+                        <td className="px-4 py-3.5 text-[13px] tnum text-right text-white/70">
                           <span className="text-apex-green">
                             {typeof c.yesPrice === 'number' ? cents(c.yesPrice) : '—'}
                           </span>
@@ -241,7 +241,7 @@ export default function MarketsPage() {
                         </td>
 
                         {/* Resolves */}
-                        <td className="py-2.5 px-2 text-[11px] text-right tabular-nums text-white/50">
+                        <td className="px-4 py-3.5 text-[13px] tnum text-right text-white/50">
                           {c.endDate != null ? durationUntil(c.endDate) : '—'}
                         </td>
                       </tr>
@@ -249,7 +249,7 @@ export default function MarketsPage() {
                   })}
                 </tbody>
               </table>
-            </div>
+            </Card>
           )}
 
           {/* No candidates */}
