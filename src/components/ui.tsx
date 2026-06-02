@@ -1,29 +1,29 @@
 'use client';
 
-// APEX v2 — shared UI primitives. Terminal/trading-desk aesthetic:
-// monospace, dark surfaces, hairline borders, accent-coded status.
+// APEX v2 — shared UI primitives. Modern fintech aesthetic: soft elevated
+// surfaces, generous spacing, large headline numerals, friendly accents.
+// Component APIs are stable so all views inherit the new look automatically.
 
 import clsx from 'clsx';
 import type { ReactNode } from 'react';
 import type { TradeStatus } from '../lib/api';
 
 export const STATUS_STYLES: Record<TradeStatus, string> = {
-  PENDING_APPROVAL: 'text-apex-amber border-apex-amber/40 bg-apex-amber/10',
-  APPROVED:         'text-blue-400 border-blue-400/40 bg-blue-400/10',
-  EXECUTING:        'text-blue-300 border-blue-300/40 bg-blue-300/10',
-  OPEN:             'text-apex-green border-apex-green/40 bg-apex-green/10',
-  CLOSED:           'text-white/50 border-white/20 bg-white/5',
-  FAILED:           'text-apex-red border-apex-red/40 bg-apex-red/10',
-  CANCELLED:        'text-white/30 border-white/10 bg-transparent',
+  PENDING_APPROVAL: 'text-apex-amber bg-apex-amber/10 ring-1 ring-apex-amber/25',
+  APPROVED:         'text-apex-blue bg-apex-blue/10 ring-1 ring-apex-blue/25',
+  EXECUTING:        'text-apex-blue bg-apex-blue/10 ring-1 ring-apex-blue/25',
+  OPEN:             'text-apex-green bg-apex-green/10 ring-1 ring-apex-green/25',
+  CLOSED:           'text-white/55 bg-white/5 ring-1 ring-white/10',
+  FAILED:           'text-apex-red bg-apex-red/10 ring-1 ring-apex-red/25',
+  CANCELLED:        'text-white/35 bg-white/[0.03] ring-1 ring-white/8',
 };
 
 export function Card({ children, className, glow }: { children: ReactNode; className?: string; glow?: 'green' | 'red' | 'amber' | 'none' }) {
   return (
     <div className={clsx(
-      'rounded-lg border border-white/8 bg-white/[0.025] backdrop-blur-sm',
-      glow === 'green' && 'shadow-[0_0_24px_-12px_rgba(99,153,34,0.5)]',
-      glow === 'red' && 'shadow-[0_0_24px_-12px_rgba(226,75,74,0.5)]',
-      glow === 'amber' && 'shadow-[0_0_24px_-12px_rgba(186,117,23,0.5)]',
+      'rounded-2xl border border-white/[0.07] bg-apex-surface/80 shadow-card backdrop-blur-sm',
+      glow === 'green' && 'shadow-glow-green border-apex-green/20',
+      glow === 'red' && 'shadow-glow border-apex-red/20',
       className,
     )}>
       {children}
@@ -33,8 +33,8 @@ export function Card({ children, className, glow }: { children: ReactNode; class
 
 export function SectionTitle({ children, right }: { children: ReactNode; right?: ReactNode }) {
   return (
-    <div className="flex items-center justify-between mb-3">
-      <h2 className="text-[10px] tracking-[0.22em] text-white/40 uppercase">{children}</h2>
+    <div className="flex items-center justify-between mb-4">
+      <h2 className="text-[13px] font-semibold text-white/80 tracking-tight">{children}</h2>
       {right}
     </div>
   );
@@ -44,17 +44,17 @@ export function StatTile({ label, value, sub, accent, mono = true }: {
   label: string; value: ReactNode; sub?: ReactNode; accent?: string; mono?: boolean;
 }) {
   return (
-    <Card className="p-4">
-      <div className="text-[9px] text-white/30 tracking-[0.15em] uppercase mb-1.5">{label}</div>
-      <div className={clsx('text-2xl font-semibold leading-none', mono && 'font-mono', accent ?? 'text-white/90')}>{value}</div>
-      {sub != null && <div className="text-[10px] text-white/35 mt-1.5">{sub}</div>}
+    <Card className="p-5 transition-shadow hover:shadow-card-hover">
+      <div className="text-[11px] font-medium text-white/40 mb-2">{label}</div>
+      <div className={clsx('text-[28px] leading-none font-semibold tracking-tight', mono && 'tnum', accent ?? 'text-white')}>{value}</div>
+      {sub != null && <div className="text-[11px] text-white/40 mt-2">{sub}</div>}
     </Card>
   );
 }
 
 export function Badge({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <span className={clsx('text-[9px] px-2 py-0.5 border rounded tracking-wider whitespace-nowrap', className)}>
+    <span className={clsx('inline-flex items-center text-[11px] font-medium px-2.5 py-1 rounded-full whitespace-nowrap', className)}>
       {children}
     </span>
   );
@@ -63,9 +63,13 @@ export function Badge({ children, className }: { children: ReactNode; className?
 export function StatusBadge({ status }: { status: TradeStatus }) {
   return (
     <Badge className={STATUS_STYLES[status]}>
-      {status === 'EXECUTING' ? '◌ EXECUTING' : status.replace('_', ' ')}
+      {status === 'EXECUTING' ? '◌ Executing' : title(status)}
     </Badge>
   );
+}
+
+function title(s: string) {
+  return s.toLowerCase().split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 }
 
 export function Button({ children, onClick, disabled, variant = 'ghost', className, size = 'md' }: {
@@ -73,18 +77,18 @@ export function Button({ children, onClick, disabled, variant = 'ghost', classNa
   variant?: 'ghost' | 'approve' | 'danger' | 'accent'; className?: string; size?: 'sm' | 'md';
 }) {
   const variants: Record<string, string> = {
-    ghost: 'border-white/12 text-white/50 hover:border-white/30 hover:text-white/80',
-    approve: 'bg-apex-green/20 border-apex-green/50 text-apex-green hover:bg-apex-green/30 font-semibold',
-    danger: 'border-white/15 text-white/40 hover:border-apex-red/60 hover:text-apex-red',
-    accent: 'border-apex-red/50 text-apex-red hover:bg-apex-red/10',
+    ghost: 'bg-white/[0.04] text-white/70 ring-1 ring-white/10 hover:bg-white/[0.08] hover:text-white',
+    approve: 'bg-apex-green text-[#062b14] font-semibold hover:bg-apex-green/90 shadow-[0_6px_18px_-8px_rgba(34,197,94,0.6)]',
+    danger: 'bg-white/[0.04] text-white/55 ring-1 ring-white/10 hover:bg-apex-red/15 hover:text-apex-red hover:ring-apex-red/30',
+    accent: 'bg-apex-red/15 text-apex-red ring-1 ring-apex-red/30 hover:bg-apex-red/25',
   };
   return (
     <button
       onClick={onClick}
       disabled={disabled}
       className={clsx(
-        'tracking-[0.12em] border rounded transition-all disabled:opacity-30 disabled:cursor-not-allowed',
-        size === 'sm' ? 'text-[10px] px-3 py-1.5' : 'text-[11px] px-4 py-2',
+        'inline-flex items-center gap-1.5 rounded-xl font-medium transition-all duration-150 active:scale-[0.97] disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100',
+        size === 'sm' ? 'text-[12px] px-3.5 py-2' : 'text-[13px] px-5 py-2.5',
         variants[variant], className,
       )}
     >
@@ -101,8 +105,8 @@ export function ProgressBar({ value, max, status = 'safe', label }: {
   const color = status === 'breach' || over ? 'bg-apex-red' : status === 'warn' ? 'bg-apex-amber' : 'bg-apex-green';
   return (
     <div>
-      {label && <div className="flex justify-between text-[10px] text-white/40 mb-1">{label}</div>}
-      <div className="h-1.5 w-full rounded-full bg-white/8 overflow-hidden">
+      {label && <div className="flex justify-between text-[11px] text-white/45 mb-1.5">{label}</div>}
+      <div className="h-2 w-full rounded-full bg-white/[0.06] overflow-hidden">
         <div className={clsx('h-full rounded-full transition-all duration-500', color)} style={{ width: `${ratio * 100}%` }} />
       </div>
     </div>
@@ -115,19 +119,22 @@ export function Spinner({ className }: { className?: string }) {
 
 export function ConnectionDot({ online }: { online: boolean }) {
   return (
-    <span className={clsx('inline-block w-1.5 h-1.5 rounded-full', online ? 'bg-apex-green animate-pulse' : 'bg-apex-red')} />
+    <span className="relative inline-flex h-2 w-2">
+      {online && <span className="absolute inline-flex h-full w-full rounded-full bg-apex-green opacity-60 animate-ping" />}
+      <span className={clsx('relative inline-flex rounded-full h-2 w-2', online ? 'bg-apex-green' : 'bg-apex-red')} />
+    </span>
   );
 }
 
 export function EmptyState({ children }: { children: ReactNode }) {
   return (
-    <div className="text-center py-16 border border-dashed border-white/8 rounded-lg text-white/25 text-[12px]">
+    <div className="text-center py-16 px-6 rounded-2xl border border-dashed border-white/10 bg-white/[0.015] text-white/40 text-[13px]">
       {children}
     </div>
   );
 }
 
 export function pnlColor(n: number | null | undefined): string {
-  if (n == null) return 'text-white/50';
+  if (n == null) return 'text-white/55';
   return n > 0 ? 'text-apex-green' : n < 0 ? 'text-apex-red' : 'text-white/60';
 }

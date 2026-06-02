@@ -9,48 +9,49 @@ import clsx from 'clsx';
 export function TopBar({ title, subtitle }: { title: string; subtitle?: string }) {
   const { health, trades, bankroll, calibration, lastRefresh, triggerScan, scanning, error } = useApex();
   const stats = winStats(trades);
-  const exposure = totalExposure(trades, bankroll?.current ?? 0);
+  const denom = bankroll?.current ?? health?.walletBalance ?? 0;
+  const exposure = totalExposure(trades, denom);
 
   const kpis = [
-    { label: 'WALLET', value: health?.walletBalance != null ? `${usd(health.walletBalance)}` : '—', tone: 'text-white/85' },
-    { label: 'EXPOSURE', value: bankroll ? `${(exposure.pct * 100).toFixed(1)}%` : (health?.portfolioExposure ?? '—'), tone: 'text-white/85' },
-    { label: 'SESSION P&L', value: signedUsd(stats.totalPnl), tone: pnlColor(stats.totalPnl) },
-    { label: 'WIN RATE', value: stats.resolved ? `${(stats.winRate * 100).toFixed(0)}%` : '—', tone: 'text-white/85' },
-    { label: 'BRIER', value: calibration?.avgBrierScore != null ? calibration.avgBrierScore.toFixed(3) : '—', tone: 'text-white/85' },
+    { label: 'Wallet', value: health?.walletBalance != null ? usd(health.walletBalance) : '—', tone: 'text-white' },
+    { label: 'Exposure', value: denom > 0 ? `${(exposure.pct * 100).toFixed(1)}%` : (health?.portfolioExposure ?? '—'), tone: 'text-white' },
+    { label: 'Session P&L', value: signedUsd(stats.totalPnl), tone: pnlColor(stats.totalPnl) },
+    { label: 'Win rate', value: stats.resolved ? `${(stats.winRate * 100).toFixed(0)}%` : '—', tone: 'text-white' },
+    { label: 'Brier', value: calibration?.avgBrierScore != null ? calibration.avgBrierScore.toFixed(3) : '—', tone: 'text-white' },
   ];
 
   return (
-    <div className="sticky top-0 z-30 border-b border-white/8 bg-[#080808]/85 backdrop-blur-md">
+    <div className="sticky top-0 z-30 border-b border-white/[0.06] bg-[#0b0d12]/80 backdrop-blur-xl">
       {health?.drawdownActive && (
-        <div className="bg-apex-red/20 border-b border-apex-red/40 px-6 py-1.5 text-center text-apex-red text-[10px] tracking-[0.2em] animate-pulse-soft">
-          ⚠ DRAWDOWN PROTOCOL ACTIVE — KELLY FRACTIONS HALVED
+        <div className="bg-apex-red/15 border-b border-apex-red/25 px-8 py-2 text-center text-apex-red text-[12px] font-medium animate-pulse-soft">
+          ⚠ Drawdown protocol active — Kelly fractions halved
         </div>
       )}
       {error && (
-        <div className="bg-apex-amber/15 border-b border-apex-amber/30 px-6 py-1.5 text-center text-apex-amber/90 text-[10px] tracking-[0.15em]">
-          ⚠ BACKEND UNREACHABLE — {error.toUpperCase()} · retrying
+        <div className="bg-apex-amber/10 border-b border-apex-amber/20 px-8 py-2 text-center text-apex-amber/90 text-[12px] font-medium">
+          Backend unreachable — {error} · retrying
         </div>
       )}
-      <div className="flex items-center justify-between px-6 py-3">
+      <div className="flex items-center justify-between gap-6 px-8 py-4">
         <div>
-          <div className="text-white/90 text-sm font-semibold tracking-[0.18em]">{title}</div>
-          {subtitle && <div className="text-white/30 text-[10px] tracking-[0.1em] mt-0.5">{subtitle}</div>}
+          <h1 className="text-white text-[19px] font-semibold tracking-tight leading-none">{title}</h1>
+          {subtitle && <p className="text-white/40 text-[12px] mt-1.5">{subtitle}</p>}
         </div>
-        <div className="flex items-center gap-5">
-          <div className="hidden md:flex items-center gap-5">
+        <div className="flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-6">
             {kpis.map(k => (
               <div key={k.label} className="text-right">
-                <div className="text-[8px] text-white/25 tracking-[0.15em]">{k.label}</div>
-                <div className={clsx('text-sm font-semibold tabular-nums', k.tone)}>{k.value}</div>
+                <div className="text-[10px] text-white/35 font-medium">{k.label}</div>
+                <div className={clsx('text-[15px] font-semibold tnum mt-0.5', k.tone)}>{k.value}</div>
               </div>
             ))}
           </div>
-          <div className="flex items-center gap-3 border-l border-white/8 pl-5">
-            <span className="text-[9px] text-white/20 tracking-wider hidden lg:inline">
+          <div className="flex items-center gap-3 border-l border-white/[0.07] pl-6">
+            <span className="text-[11px] text-white/30 hidden lg:inline">
               {lastRefresh ? `synced ${lastRefresh.toLocaleTimeString()}` : 'connecting…'}
             </span>
             <Button variant="accent" size="sm" onClick={triggerScan} disabled={scanning}>
-              {scanning ? <><Spinner /> SCANNING</> : '▶ TRIGGER SCAN'}
+              {scanning ? <><Spinner /> Scanning</> : <>▶ Trigger scan</>}
             </Button>
           </div>
         </div>

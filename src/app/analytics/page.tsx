@@ -18,39 +18,39 @@ export default function AnalyticsPage() {
     : [];
 
   return (
-    <div className="min-h-screen bg-[#080808] font-mono text-white">
-      <TopBar title="ANALYTICS" subtitle="Performance, calibration & edge distribution" />
+    <div className="min-h-screen bg-[#080808] font-sans text-white">
+      <TopBar title="Analytics" subtitle="Performance, calibration & edge distribution" />
 
-      <div className="px-6 py-6 max-w-[1400px] mx-auto space-y-6">
+      <div className="px-8 py-8 max-w-[1400px] mx-auto space-y-8">
 
         {/* ── KPI row ────────────────────────────────────────────────── */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           <StatTile
-            label="WIN RATE"
+            label="Win rate"
             value={pct(s.winRate, 0)}
             sub={`${s.wins}W / ${s.losses}L`}
             accent={s.winRate >= 0.5 ? 'text-apex-green' : 'text-apex-amber'}
           />
           <StatTile
-            label="PROFIT FACTOR"
+            label="Profit factor"
             value={s.profitFactor === Infinity ? '∞' : s.profitFactor.toFixed(2)}
           />
           <StatTile
-            label="TOTAL P&L"
+            label="Total P&L"
             value={signedUsd(s.totalPnl)}
             accent={pnlColor(s.totalPnl)}
           />
           <StatTile
-            label="RESOLVED"
+            label="Resolved"
             value={num(s.resolved)}
           />
           <StatTile
-            label="AVG WIN"
+            label="Avg win"
             value={signedUsd(s.avgWin)}
             accent="text-apex-green"
           />
           <StatTile
-            label="AVG LOSS"
+            label="Avg loss"
             value={usd(s.avgLoss)}
             accent="text-apex-red"
           />
@@ -61,13 +61,13 @@ export default function AnalyticsPage() {
 
           {/* Equity Curve */}
           <Card className="p-5">
-            <SectionTitle>Equity Curve</SectionTitle>
+            <SectionTitle>Equity curve</SectionTitle>
             <EquityCurve trades={trades} starting={bankroll?.starting ?? 0} />
           </Card>
 
           {/* Realized P&L per Trade */}
           <Card className="p-5">
-            <SectionTitle>Realized P&amp;L per Trade</SectionTitle>
+            <SectionTitle>Realized P&amp;L per trade</SectionTitle>
             <PnlBars trades={trades} />
           </Card>
 
@@ -87,7 +87,7 @@ export default function AnalyticsPage() {
                     >
                       {calibration.calibrationGrade}
                     </Badge>
-                    <span className="text-[9px] text-white/35 tracking-wide">
+                    <span className="text-[11px] text-white/40">
                       Brier {calibration.avgBrierScore.toFixed(3)}
                     </span>
                   </div>
@@ -101,13 +101,13 @@ export default function AnalyticsPage() {
 
           {/* Signal Tier Distribution */}
           <Card className="p-5">
-            <SectionTitle>Signal Tier Distribution</SectionTitle>
+            <SectionTitle>Signal tier distribution</SectionTitle>
             <TierChart trades={trades} />
           </Card>
 
           {/* Edge Distribution */}
           <Card className="p-5">
-            <SectionTitle>Edge Distribution</SectionTitle>
+            <SectionTitle>Edge distribution</SectionTitle>
             <EdgeChart trades={trades} />
           </Card>
 
@@ -115,7 +115,7 @@ export default function AnalyticsPage() {
 
         {/* ── Category Drift table ───────────────────────────────────── */}
         <Card className="p-5">
-          <SectionTitle>Category Drift</SectionTitle>
+          <SectionTitle>Category drift</SectionTitle>
 
           {driftEntries.length === 0 ? (
             <EmptyState>
@@ -125,20 +125,20 @@ export default function AnalyticsPage() {
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="border-b border-white/8">
-                    <th className="text-left text-[9px] tracking-[0.15em] text-white/30 uppercase py-2 px-2">
+                  <tr className="text-left text-[11px] font-medium text-white/40 border-b border-white/[0.06]">
+                    <th className="px-4 py-3 font-medium text-left">
                       Category
                     </th>
-                    <th className="text-right text-[9px] tracking-[0.15em] text-white/30 uppercase py-2 px-2">
+                    <th className="px-4 py-3 font-medium text-right">
                       Predicted
                     </th>
-                    <th className="text-right text-[9px] tracking-[0.15em] text-white/30 uppercase py-2 px-2">
+                    <th className="px-4 py-3 font-medium text-right">
                       Actual
                     </th>
-                    <th className="text-right text-[9px] tracking-[0.15em] text-white/30 uppercase py-2 px-2">
+                    <th className="px-4 py-3 font-medium text-right">
                       Bias
                     </th>
-                    <th className="text-right text-[9px] tracking-[0.15em] text-white/30 uppercase py-2 px-2">
+                    <th className="px-4 py-3 font-medium text-right">
                       N
                     </th>
                   </tr>
@@ -153,20 +153,20 @@ export default function AnalyticsPage() {
                           ? 'text-apex-amber'
                           : 'text-apex-red';
                     return (
-                      <tr key={category} className="border-b border-white/5">
-                        <td className="py-2.5 px-2 text-[11px] text-white/70">
+                      <tr key={category} className="border-b border-white/[0.04] last:border-0 hover:bg-white/[0.02] transition-colors">
+                        <td className="px-4 py-3 text-[13px] text-white/70">
                           {category}
                         </td>
-                        <td className="py-2.5 px-2 text-[11px] text-right tabular-nums text-white/60">
+                        <td className="px-4 py-3 text-[13px] text-right tnum text-white/60">
                           {pct(d.avgPredicted, 1)}
                         </td>
-                        <td className="py-2.5 px-2 text-[11px] text-right tabular-nums text-white/60">
+                        <td className="px-4 py-3 text-[13px] text-right tnum text-white/60">
                           {pct(d.avgActual, 1)}
                         </td>
-                        <td className={clsx('py-2.5 px-2 text-[11px] text-right tabular-nums', biasColor)}>
+                        <td className={clsx('px-4 py-3 text-[13px] text-right tnum', biasColor)}>
                           {pct(d.bias, 1)}
                         </td>
-                        <td className="py-2.5 px-2 text-[11px] text-right tabular-nums text-white/50">
+                        <td className="px-4 py-3 text-[13px] text-right tnum text-white/50">
                           {d.count}
                         </td>
                       </tr>

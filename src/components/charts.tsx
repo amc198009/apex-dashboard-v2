@@ -11,11 +11,11 @@ import {
 } from '../lib/analytics';
 import { usd, signedUsd } from '../lib/format';
 
-const GREEN = '#639922';
-const RED = '#E24B4A';
-const AMBER = '#BA7517';
-const GRID = 'rgba(255,255,255,0.06)';
-const AXIS = 'rgba(255,255,255,0.3)';
+const GREEN = '#22C55E';
+const RED = '#F2555A';
+const AMBER = '#F59E0B';
+const GRID = 'rgba(255,255,255,0.05)';
+const AXIS = 'rgba(255,255,255,0.35)';
 
 // Recharts measures the DOM, so only render after mount to avoid SSR width=0.
 function useMounted() {
@@ -30,8 +30,9 @@ function ChartFrame({ height = 220, mounted, children }: { height?: number; moun
 }
 
 const tipStyle = {
-  background: '#0d0d0d', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 6,
-  fontSize: 11, fontFamily: 'JetBrains Mono, monospace', color: 'rgba(255,255,255,0.85)',
+  background: '#1B1E27', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12,
+  boxShadow: '0 12px 32px -12px rgba(0,0,0,0.8)', padding: '8px 12px',
+  fontSize: 12, fontFamily: 'Inter, sans-serif', color: 'rgba(255,255,255,0.9)',
 };
 
 function EmptyChart({ height = 220, label }: { height?: number; label: string }) {

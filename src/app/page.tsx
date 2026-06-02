@@ -22,34 +22,34 @@ export default function OverviewPage() {
     : '—';
 
   return (
-    <div className="min-h-screen bg-[#080808] font-mono text-white/90">
-      <TopBar title="OVERVIEW" subtitle="Autonomous Polymarket edge execution" />
+    <div className="min-h-screen bg-[#080808] font-sans text-white/90">
+      <TopBar title="Overview" subtitle="Autonomous Polymarket edge execution" />
 
-      <div className="px-6 py-6 max-w-[1400px] mx-auto space-y-6">
+      <div className="px-8 py-8 max-w-[1400px] mx-auto space-y-8">
 
         {/* ── Stat tiles row ── */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <StatTile
-            label="PENDING"
+            label="Pending"
             value={String(summary.pending)}
             accent="text-apex-amber"
           />
           <StatTile
-            label="OPEN"
+            label="Open"
             value={String(summary.open)}
             accent="text-apex-green"
           />
           <StatTile
-            label="CLOSED"
+            label="Closed"
             value={String(summary.closed)}
           />
           <StatTile
-            label="FAILED"
+            label="Failed"
             value={String(summary.failed)}
             accent="text-apex-red"
           />
           <StatTile
-            label="BANKROLL"
+            label="Bankroll"
             value={bankroll != null ? usd(bankroll.current) : '—'}
             sub={bankrollSub}
             accent={
@@ -69,8 +69,8 @@ export default function OverviewPage() {
           <div className="lg:col-span-2 space-y-6">
 
             {/* Equity Curve */}
-            <Card className="p-5">
-              <SectionTitle>Equity Curve</SectionTitle>
+            <Card className="p-6">
+              <SectionTitle>Equity curve</SectionTitle>
               <EquityCurve
                 trades={trades}
                 starting={bankroll?.starting ?? 0}
@@ -79,13 +79,13 @@ export default function OverviewPage() {
 
             {/* Pending Approvals */}
             <div>
-              <SectionTitle>Pending Approvals</SectionTitle>
+              <SectionTitle>Pending approvals</SectionTitle>
               {pendingTrades.length === 0 ? (
                 <EmptyState>
                   No pending approvals — agent is scanning markets autonomously
                 </EmptyState>
               ) : (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {pendingTrades.map(t => (
                     <TradeCard key={t.id} trade={t} />
                   ))}
@@ -95,11 +95,11 @@ export default function OverviewPage() {
 
             {/* Open Positions */}
             <div>
-              <SectionTitle>Open Positions</SectionTitle>
+              <SectionTitle>Open positions</SectionTitle>
               {openTrades.length === 0 ? (
                 <EmptyState>No open positions</EmptyState>
               ) : (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {openTrades.map(t => (
                     <TradeCard key={t.id} trade={t} />
                   ))}
@@ -114,9 +114,9 @@ export default function OverviewPage() {
             <RiskPanel />
 
             {/* Session stats card */}
-            <Card className="p-5">
+            <Card className="p-6">
               <SectionTitle>Session</SectionTitle>
-              <div className="space-y-2 mt-3">
+              <div className="mt-3">
                 <SessionRow
                   label="Resolved"
                   value={String(stats.resolved)}
@@ -136,7 +136,7 @@ export default function OverviewPage() {
                 <SessionRow
                   label="Total P&L"
                   value={signedUsd(stats.totalPnl)}
-                  valueClass={clsx('tabular-nums', pnlColor(stats.totalPnl))}
+                  valueClass={clsx('tnum', pnlColor(stats.totalPnl))}
                 />
                 <SessionRow
                   label="Best trade"
@@ -146,8 +146,8 @@ export default function OverviewPage() {
                       : '—'
                   }
                   valueClass={clsx(
-                    'tabular-nums',
-                    stats.bestTrade != null ? pnlColor(stats.bestTrade) : 'text-white/50'
+                    'tnum',
+                    stats.bestTrade != null ? pnlColor(stats.bestTrade) : 'text-white/40'
                   )}
                 />
                 <SessionRow
@@ -158,8 +158,8 @@ export default function OverviewPage() {
                       : '—'
                   }
                   valueClass={clsx(
-                    'tabular-nums',
-                    stats.worstTrade != null ? pnlColor(stats.worstTrade) : 'text-white/50'
+                    'tnum',
+                    stats.worstTrade != null ? pnlColor(stats.worstTrade) : 'text-white/40'
                   )}
                 />
               </div>
@@ -185,9 +185,9 @@ function SessionRow({
   valueClass?: string;
 }) {
   return (
-    <div className="flex items-center justify-between">
-      <span className="text-white/40 text-[10px] tracking-wider">{label}</span>
-      <span className={clsx('text-[11px] tabular-nums', valueClass ?? 'text-white/80')}>
+    <div className="flex items-center justify-between py-1.5 text-[13px]">
+      <span className="text-white/45">{label}</span>
+      <span className={clsx('font-medium tnum', valueClass ?? 'text-white')}>
         {value}
       </span>
     </div>
