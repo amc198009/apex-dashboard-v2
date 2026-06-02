@@ -5,6 +5,7 @@ const BASE = process.env.NEXT_PUBLIC_APEX_API ?? 'http://localhost:3001/api';
 async function apexFetch<T>(path: string, opts?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
     headers: { 'Content-Type': 'application/json' },
+    cache: 'no-store',
     ...opts,
   });
   if (!res.ok) {
@@ -14,12 +15,16 @@ async function apexFetch<T>(path: string, opts?: RequestInit): Promise<T> {
   return res.json();
 }
 
+export const API_BASE = BASE;
+
 export const api = {
   health:      () => apexFetch<HealthResponse>('/health'),
   queue:       (status?: string) => apexFetch<QueueResponse>(`/queue${status ? `?status=${status}` : ''}`),
   approve:     (id: string) => apexFetch<{ success: boolean; trade: Trade }>(`/queue/${id}/approve`, { method: 'POST' }),
   cancel:      (id: string) => apexFetch<{ success: boolean }>(`/queue/${id}/cancel`, { method: 'POST' }),
   scanTrigger: () => apexFetch<{ message: string }>('/scan/trigger', { method: 'POST' }),
+  scanPreview: () => apexFetch<ScanPreview>('/scan'),
+  positions:   () => apexFetch<PositionsResponse>('/positions'),
   wallet:      () => apexFetch<{ balance: number; currency: string }>('/wallet'),
   calibration: () => apexFetch<CalibrationSummary>('/calibration'),
   bankroll:    (sync = false) => apexFetch<BankrollStats>(`/bankroll${sync ? '?sync=true' : ''}`),
@@ -55,11 +60,20 @@ export interface Trade {
   pnl?: number;
   failureReason?: string;
   closeReason?: string;
+  // live mark (present on open positions if backend supplies it)
+  currentPrice?: number;
+}
+
+export interface QueueSummary {
+  pending: number;
+  open: number;
+  closed: number;
+  failed: number;
 }
 
 export interface QueueResponse {
   trades: Trade[];
-  summary: { pending: number; open: number; closed: number; failed: number };
+  summary: QueueSummary;
   drawdownActive: boolean;
   portfolioExposure: number;
 }
@@ -95,4 +109,30 @@ export interface BankrollStats {
   reserveFraction: number;
   reserveAmount: number;
   lastSyncedAt: string | null;
+}
+
+// Loosely-typed (backend shape not fully pinned) — consumed defensively.
+export interface PositionsResponse {
+  positions?: Trade[];
+  [k: string]: unknown;
+}
+
+export interface ScanCandidate {
+  marketId?: string;
+  question?: string;
+  category?: string;
+  liquidity?: number;
+  volume?: number;
+  endDate?: string;
+  yesPrice?: number;
+  noPrice?: number;
+  [k: string]: unknown;
+}
+
+export interface ScanPreview {
+  candidates?: ScanCandidate[];
+  qualified?: number;
+  disqualified?: number;
+  scanned?: number;
+  [k: string]: unknown;
 }

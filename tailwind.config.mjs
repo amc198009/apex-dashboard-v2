@@ -21,6 +21,16 @@ const config = {
         mono: ['JetBrains Mono', 'Fira Code', 'Consolas', 'monospace'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
+      keyframes: {
+        'fade-in': { '0%': { opacity: '0', transform: 'translateY(4px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+        ticker: { '0%': { transform: 'translateX(0)' }, '100%': { transform: 'translateX(-50%)' } },
+        'pulse-soft': { '0%,100%': { opacity: '1' }, '50%': { opacity: '0.4' } },
+      },
+      animation: {
+        'fade-in': 'fade-in 0.3s ease-out',
+        ticker: 'ticker 40s linear infinite',
+        'pulse-soft': 'pulse-soft 2s ease-in-out infinite',
+      },
     },
   },
   plugins: [],
