@@ -5,7 +5,7 @@
 // never drops the live feed.
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { api, type Trade, type HealthResponse, type CalibrationSummary, type BankrollStats, type QueueSummary } from './api';
+import { api, SSE_ENABLED, STREAM_URL, type Trade, type HealthResponse, type CalibrationSummary, type BankrollStats, type QueueSummary } from './api';
 
 const POLL_MS = 8000;
 const EMPTY_SUMMARY: QueueSummary = { pending: 0, open: 0, closed: 0, failed: 0 };
@@ -64,7 +64,23 @@ export function ApexProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     refresh();
     timer.current = setInterval(refresh, POLL_MS);
-    return () => { if (timer.current) clearInterval(timer.current); };
+
+    // Real-time: when the backend exposes an SSE /stream endpoint, push events
+    // trigger an immediate refresh on top of the polling baseline. Falls back
+    // silently to polling if unavailable.
+    let es: EventSource | null = null;
+    if (SSE_ENABLED && typeof window !== 'undefined' && 'EventSource' in window) {
+      try {
+        es = new EventSource(STREAM_URL);
+        es.onmessage = () => refresh();
+        es.onerror = () => { es?.close(); es = null; };
+      } catch { /* keep polling */ }
+    }
+
+    return () => {
+      if (timer.current) clearInterval(timer.current);
+      es?.close();
+    };
   }, [refresh]);
 
   const approve = useCallback(async (id: string) => {

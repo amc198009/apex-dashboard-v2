@@ -1,11 +1,24 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { ApexProvider } from '../lib/store';
 import { Nav } from '../components/Nav';
+import { CommandPalette } from '../components/CommandPalette';
 
 export const metadata: Metadata = {
-  title: 'APEX v2 — Trading Terminal',
+  title: 'APEX — Trading Terminal',
   description: 'Autonomous Polymarket edge execution — trading platform',
+  manifest: '/manifest.webmanifest',
+  applicationName: 'APEX',
+  appleWebApp: { capable: true, statusBarStyle: 'black-translucent', title: 'APEX' },
+  icons: { icon: '/icon.svg', apple: '/icon.svg' },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#0b0d12',
+  colorScheme: 'dark',
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -15,6 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ApexProvider>
           <Nav />
           <main className="md:ml-60 min-h-screen pt-14 md:pt-0 pb-20 md:pb-0">{children}</main>
+          <CommandPalette />
         </ApexProvider>
       </body>
     </html>

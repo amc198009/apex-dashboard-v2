@@ -1,12 +1,18 @@
 // APEX v2 Dashboard API Client
 
 const BASE = process.env.NEXT_PUBLIC_APEX_API ?? 'http://localhost:3001/api';
+const API_KEY = process.env.NEXT_PUBLIC_APEX_KEY ?? '';
+// Real-time stream: enabled when the backend exposes an SSE endpoint.
+export const SSE_ENABLED = ['1', 'true', 'yes'].includes((process.env.NEXT_PUBLIC_APEX_SSE ?? '').toLowerCase());
+export const STREAM_URL = `${BASE}/stream`;
 
 async function apexFetch<T>(path: string, opts?: RequestInit): Promise<T> {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json', ...(opts?.headers as Record<string, string>) };
+  if (API_KEY) headers['Authorization'] = `Bearer ${API_KEY}`;
   const res = await fetch(`${BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json' },
     cache: 'no-store',
     ...opts,
+    headers,
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: res.statusText }));
@@ -28,6 +34,8 @@ export const api = {
   wallet:      () => apexFetch<{ balance: number; currency: string }>('/wallet'),
   calibration: () => apexFetch<CalibrationSummary>('/calibration'),
   bankroll:    (sync = false) => apexFetch<BankrollStats>(`/bankroll${sync ? '?sync=true' : ''}`),
+  getConfig:   () => apexFetch<AgentConfig>('/config'),
+  updateConfig: (patch: Partial<AgentConfig>) => apexFetch<AgentConfig>('/config', { method: 'PATCH', body: JSON.stringify(patch) }),
 };
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -134,5 +142,23 @@ export interface ScanPreview {
   qualified?: number;
   disqualified?: number;
   scanned?: number;
+  [k: string]: unknown;
+}
+
+// Mutable agent configuration (exposed by GET/PATCH /config on the backend).
+// All fields optional — the Settings UI falls back to the riskConfig mirror.
+export interface AgentConfig {
+  minNetEdge?: number;
+  maxSinglePct?: number;
+  maxCategoryPct?: number;
+  maxCorrelatedPct?: number;
+  maxPortfolioPct?: number;
+  maxConcurrent?: number;
+  reserveFraction?: number;
+  minLiquidity?: number;
+  minHoursToResolution?: number;
+  paperMode?: boolean;
+  scanCron?: string;
+  monitorCron?: string;
   [k: string]: unknown;
 }
