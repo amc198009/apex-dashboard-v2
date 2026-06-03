@@ -280,7 +280,7 @@ export default function PositionsPage() {
         subtitle="Live open positions & risk constraints"
       />
 
-      <div className="px-8 py-8 max-w-[1400px] mx-auto space-y-8">
+      <div className="px-4 py-6 md:px-8 md:py-8 max-w-[1400px] mx-auto space-y-6 md:space-y-8">
         {/* ── Main grid ─────────────────────────────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* LEFT column */}

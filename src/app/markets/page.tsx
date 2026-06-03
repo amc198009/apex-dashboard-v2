@@ -62,7 +62,7 @@ export default function MarketsPage() {
         subtitle="Polymarket scan funnel & candidate evaluation"
       />
 
-      <div className="px-8 py-8 max-w-[1400px] mx-auto space-y-8">
+      <div className="px-4 py-6 md:px-8 md:py-8 max-w-[1400px] mx-auto space-y-6 md:space-y-8">
 
         {/* Funnel StatTiles */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

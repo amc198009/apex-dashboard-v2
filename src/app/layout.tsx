@@ -14,7 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <ApexProvider>
           <Nav />
-          <main className="ml-60 min-h-screen">{children}</main>
+          <main className="md:ml-60 min-h-screen pt-14 md:pt-0 pb-20 md:pb-0">{children}</main>
         </ApexProvider>
       </body>
     </html>
