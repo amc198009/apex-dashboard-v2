@@ -12,6 +12,7 @@ const LINKS = [
   { href: '/positions', label: 'Positions', icon: LayersIcon },
   { href: '/markets',   label: 'Markets',   icon: ScanIcon },
   { href: '/analytics', label: 'Analytics', icon: ChartIcon },
+  { href: '/settings',  label: 'Settings',  icon: GearIcon },
 ];
 
 const isActive = (href: string, pathname: string) =>
@@ -87,7 +88,7 @@ export function Nav() {
         </div>
       </div>
 
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 grid grid-cols-4 border-t border-white/[0.06] bg-[#0c0e14]/90 backdrop-blur-xl pb-[env(safe-area-inset-bottom)]">
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 grid grid-cols-5 border-t border-white/[0.06] bg-[#0c0e14]/90 backdrop-blur-xl pb-[env(safe-area-inset-bottom)]">
         {LINKS.map(l => {
           const active = isActive(l.href, pathname);
           const Icon = l.icon;
@@ -127,4 +128,7 @@ function ScanIcon({ className }: IconProps) {
 }
 function ChartIcon({ className }: IconProps) {
   return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 5-6"/></svg>;
+}
+function GearIcon({ className }: IconProps) {
+  return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.2.61.78 1.05 1.51 1.05H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>;
 }

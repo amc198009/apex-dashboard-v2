@@ -79,6 +79,29 @@ export function TradeCard({ trade }: { trade: Trade }) {
 
       {expanded && (
         <div className="border-t border-white/[0.06] px-5 py-4 grid grid-cols-2 gap-x-10 gap-y-2 text-[12px] animate-fade-in">
+          {/* Decision breakdown — the agent's reasoning at a glance */}
+          <div className="col-span-2 mb-2 rounded-xl bg-white/[0.02] ring-1 ring-white/[0.05] p-3.5">
+            <div className="flex items-center justify-between mb-2.5">
+              <span className="text-[11px] font-medium text-white/45">Decision breakdown</span>
+              <span className="text-[11px] text-white/40">Tier {trade.signalTier} · Kelly {trade.kellyFractionLabel}</span>
+            </div>
+            <div className="flex items-center justify-between text-[11px] mb-1.5">
+              <span className="text-white/45">Net edge</span>
+              <span className="tnum text-apex-green">{signedPct(trade.netEdge)} <span className="text-white/30">/ min 7%</span></span>
+            </div>
+            <div className="relative h-1.5 rounded-full bg-white/[0.06] overflow-hidden mb-1">
+              <div className="h-full rounded-full bg-apex-green" style={{ width: `${Math.min(Math.max(trade.netEdge / 0.25, 0), 1) * 100}%` }} />
+            </div>
+            {/* 7% minimum-edge tick */}
+            <div className="relative h-0">
+              <span className="absolute -top-2.5 w-px h-2.5 bg-white/40" style={{ left: `${(0.07 / 0.25) * 100}%` }} />
+            </div>
+            <div className="grid grid-cols-3 gap-3 mt-3">
+              <Stat k="Model prob" v={pct(trade.estimatedProbability)} />
+              <Stat k="Entry" v={cents(trade.entryPrice)} />
+              <Stat k="Allocation" v={pct(trade.allocationPct, 2)} />
+            </div>
+          </div>
           <Row label="Market ID" value={shortId(trade.marketId)} />
           <Row label="Trade ID" value={shortId(trade.id)} />
           <Row label="Resolution" value={dateShort(trade.resolutionDate)} />
@@ -104,6 +127,14 @@ function Meta({ children }: { children: React.ReactNode }) {
 }
 function Dot() {
   return <span className="text-white/20">·</span>;
+}
+function Stat({ k, v }: { k: string; v: string }) {
+  return (
+    <div>
+      <div className="text-[10px] text-white/35">{k}</div>
+      <div className="text-[13px] font-medium text-white/80 tnum mt-0.5">{v}</div>
+    </div>
+  );
 }
 function Row({ label, value, danger }: { label: string; value: string; danger?: boolean }) {
   return (

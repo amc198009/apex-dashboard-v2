@@ -134,6 +134,53 @@ export function EmptyState({ children }: { children: ReactNode }) {
   );
 }
 
+export function Toggle({ checked, onChange, disabled }: { checked: boolean; onChange: (v: boolean) => void; disabled?: boolean }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      disabled={disabled}
+      onClick={() => onChange(!checked)}
+      className={clsx(
+        'relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors disabled:opacity-40',
+        checked ? 'bg-apex-green' : 'bg-white/12',
+      )}
+    >
+      <span className="inline-block rounded-full bg-white transition-transform" style={{ height: 18, width: 18, transform: checked ? 'translateX(22px)' : 'translateX(3px)' }} />
+    </button>
+  );
+}
+
+export function Field({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
+  return (
+    <label className="flex items-center justify-between gap-4 py-2.5">
+      <span className="min-w-0">
+        <span className="block text-[13px] text-white/80">{label}</span>
+        {hint && <span className="block text-[11px] text-white/35 mt-0.5">{hint}</span>}
+      </span>
+      <span className="shrink-0">{children}</span>
+    </label>
+  );
+}
+
+export function NumberInput({ value, onChange, suffix, step, min, max, disabled }: {
+  value: number; onChange: (v: number) => void; suffix?: string; step?: number; min?: number; max?: number; disabled?: boolean;
+}) {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-xl bg-white/[0.04] ring-1 ring-white/10 px-3 py-1.5 focus-within:ring-white/25">
+      <input
+        type="number"
+        value={Number.isFinite(value) ? value : ''}
+        step={step} min={min} max={max} disabled={disabled}
+        onChange={e => onChange(e.target.value === '' ? NaN : Number(e.target.value))}
+        className="w-20 bg-transparent text-right text-[13px] text-white tnum outline-none disabled:opacity-50"
+      />
+      {suffix && <span className="text-[11px] text-white/35">{suffix}</span>}
+    </span>
+  );
+}
+
 export function pnlColor(n: number | null | undefined): string {
   if (n == null) return 'text-white/55';
   return n > 0 ? 'text-apex-green' : n < 0 ? 'text-apex-red' : 'text-white/60';
