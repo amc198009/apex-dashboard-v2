@@ -4,12 +4,15 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import { useApex } from '../lib/store';
+import { useEvaluate } from './EvaluateModal';
+import { downloadCsv } from '../lib/export';
 
 interface Command { id: string; label: string; hint?: string; run: () => void; }
 
 export function CommandPalette() {
   const router = useRouter();
-  const { triggerScan, refresh } = useApex();
+  const { triggerScan, refresh, trades } = useApex();
+  const { open: openEvaluate } = useEvaluate();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
@@ -21,9 +24,11 @@ export function CommandPalette() {
     { id: 'nav-markets', label: 'Go to Markets', hint: 'Page', run: () => router.push('/markets') },
     { id: 'nav-analytics', label: 'Go to Analytics', hint: 'Page', run: () => router.push('/analytics') },
     { id: 'nav-settings', label: 'Go to Settings', hint: 'Page', run: () => router.push('/settings') },
+    { id: 'act-evaluate', label: 'Evaluate a market', hint: 'Action', run: () => openEvaluate() },
     { id: 'act-scan', label: 'Trigger market scan', hint: 'Action', run: () => triggerScan() },
     { id: 'act-refresh', label: 'Refresh data', hint: 'Action', run: () => refresh() },
-  ], [router, triggerScan, refresh]);
+    { id: 'act-export', label: 'Export trades (CSV)', hint: 'Action', run: () => downloadCsv(trades) },
+  ], [router, triggerScan, refresh, openEvaluate, trades]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();

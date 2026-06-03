@@ -3,6 +3,9 @@ import './globals.css';
 import { ApexProvider } from '../lib/store';
 import { Nav } from '../components/Nav';
 import { CommandPalette } from '../components/CommandPalette';
+import { ToastProvider } from '../components/Toast';
+import { AlertsWatcher } from '../components/AlertsWatcher';
+import { EvaluateProvider } from '../components/EvaluateModal';
 
 export const metadata: Metadata = {
   title: 'APEX — Trading Terminal',
@@ -26,9 +29,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <ApexProvider>
-          <Nav />
-          <main className="md:ml-60 min-h-screen pt-14 md:pt-0 pb-20 md:pb-0">{children}</main>
-          <CommandPalette />
+          <ToastProvider>
+            <EvaluateProvider>
+              <Nav />
+              <main className="md:ml-60 min-h-screen pt-14 md:pt-0 pb-20 md:pb-0">{children}</main>
+              <CommandPalette />
+              <AlertsWatcher />
+            </EvaluateProvider>
+          </ToastProvider>
         </ApexProvider>
       </body>
     </html>

@@ -36,6 +36,7 @@ export const api = {
   bankroll:    (sync = false) => apexFetch<BankrollStats>(`/bankroll${sync ? '?sync=true' : ''}`),
   getConfig:   () => apexFetch<AgentConfig>('/config'),
   updateConfig: (patch: Partial<AgentConfig>) => apexFetch<AgentConfig>('/config', { method: 'PATCH', body: JSON.stringify(patch) }),
+  evaluate:    (input: EvaluateInput) => apexFetch<EvaluateResult>('/evaluate', { method: 'POST', body: JSON.stringify(input) }),
 };
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -142,6 +143,26 @@ export interface ScanPreview {
   qualified?: number;
   disqualified?: number;
   scanned?: number;
+  [k: string]: unknown;
+}
+
+// Manual market evaluation (POST /evaluate). Shapes are loose — backend not pinned.
+export interface EvaluateInput { url?: string; marketId?: string; question?: string; }
+export interface EvaluateResult {
+  question?: string;
+  category?: string;
+  direction?: 'YES' | 'NO';
+  estimatedProbability?: number;
+  entryPrice?: number;
+  netEdge?: number;
+  signalTier?: number;
+  allocationUsdc?: number;
+  allocationPct?: number;
+  kellyFractionLabel?: string;
+  recommendation?: string;
+  counterArgument?: string;
+  disqualified?: boolean;
+  reason?: string;
   [k: string]: unknown;
 }
 

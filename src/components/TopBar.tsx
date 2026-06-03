@@ -2,12 +2,14 @@
 
 import { useApex } from '../lib/store';
 import { Button, Spinner, pnlColor } from './ui';
+import { useEvaluate } from './EvaluateModal';
 import { usd, signedUsd } from '../lib/format';
 import { winStats, totalExposure } from '../lib/analytics';
 import clsx from 'clsx';
 
 export function TopBar({ title, subtitle }: { title: string; subtitle?: string }) {
   const { health, trades, bankroll, calibration, lastRefresh, triggerScan, scanning, error } = useApex();
+  const { open: openEvaluate } = useEvaluate();
   const stats = winStats(trades);
   const denom = bankroll?.current ?? health?.walletBalance ?? 0;
   const exposure = totalExposure(trades, denom);
@@ -50,6 +52,9 @@ export function TopBar({ title, subtitle }: { title: string; subtitle?: string }
             <span className="text-[11px] text-white/30 hidden lg:inline">
               {lastRefresh ? `synced ${lastRefresh.toLocaleTimeString()}` : 'connecting…'}
             </span>
+            <Button variant="ghost" size="sm" className="whitespace-nowrap hidden sm:inline-flex" onClick={openEvaluate}>
+              ＋ Evaluate
+            </Button>
             <Button variant="accent" size="sm" className="whitespace-nowrap" onClick={triggerScan} disabled={scanning}>
               {scanning ? <><Spinner /> Scanning</> : <>▶ Trigger scan</>}
             </Button>
