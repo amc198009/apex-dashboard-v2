@@ -25,7 +25,7 @@ export default function OverviewPage() {
     <div className="min-h-screen bg-[#080808] font-sans text-white/90">
       <TopBar title="Overview" subtitle="Autonomous Polymarket edge execution" />
 
-      <div className="px-8 py-8 max-w-[1400px] mx-auto space-y-8">
+      <div className="px-4 py-6 md:px-8 md:py-8 max-w-[1400px] mx-auto space-y-6 md:space-y-8">
 
         {/* ── Stat tiles row ── */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">

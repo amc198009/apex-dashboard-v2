@@ -21,7 +21,7 @@ export default function AnalyticsPage() {
     <div className="min-h-screen bg-[#080808] font-sans text-white">
       <TopBar title="Analytics" subtitle="Performance, calibration & edge distribution" />
 
-      <div className="px-8 py-8 max-w-[1400px] mx-auto space-y-8">
+      <div className="px-4 py-6 md:px-8 md:py-8 max-w-[1400px] mx-auto space-y-6 md:space-y-8">
 
         {/* ── KPI row ────────────────────────────────────────────────── */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">

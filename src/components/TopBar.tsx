@@ -32,7 +32,7 @@ export function TopBar({ title, subtitle }: { title: string; subtitle?: string }
           Backend unreachable — {error} · retrying
         </div>
       )}
-      <div className="flex items-center justify-between gap-6 px-8 py-4">
+      <div className="flex items-center justify-between gap-4 px-4 md:px-8 py-4">
         <div>
           <h1 className="text-white text-[19px] font-semibold tracking-tight leading-none">{title}</h1>
           {subtitle && <p className="text-white/40 text-[12px] mt-1.5">{subtitle}</p>}
@@ -46,11 +46,11 @@ export function TopBar({ title, subtitle }: { title: string; subtitle?: string }
               </div>
             ))}
           </div>
-          <div className="flex items-center gap-3 border-l border-white/[0.07] pl-6">
+          <div className="flex items-center gap-3 md:border-l md:border-white/[0.07] md:pl-6">
             <span className="text-[11px] text-white/30 hidden lg:inline">
               {lastRefresh ? `synced ${lastRefresh.toLocaleTimeString()}` : 'connecting…'}
             </span>
-            <Button variant="accent" size="sm" onClick={triggerScan} disabled={scanning}>
+            <Button variant="accent" size="sm" className="whitespace-nowrap" onClick={triggerScan} disabled={scanning}>
               {scanning ? <><Spinner /> Scanning</> : <>▶ Trigger scan</>}
             </Button>
           </div>
