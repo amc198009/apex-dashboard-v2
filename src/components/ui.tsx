@@ -62,8 +62,10 @@ export function Badge({ children, className }: { children: ReactNode; className?
 
 export function StatusBadge({ status }: { status: TradeStatus }) {
   return (
-    <Badge className={STATUS_STYLES[status]}>
-      {status === 'EXECUTING' ? '◌ Executing' : title(status)}
+    <Badge className={clsx('gap-1.5 font-semibold', STATUS_STYLES[status])}>
+      {status === 'EXECUTING'
+        ? <><Spinner /> Executing</>
+        : <><span className="h-1.5 w-1.5 rounded-full bg-current" />{title(status)}</>}
     </Badge>
   );
 }
@@ -80,7 +82,7 @@ export function Button({ children, onClick, disabled, variant = 'ghost', classNa
     ghost: 'bg-white/[0.04] text-white/70 ring-1 ring-white/10 hover:bg-white/[0.08] hover:text-white',
     approve: 'bg-apex-green text-[#062b14] font-semibold hover:bg-apex-green/90 shadow-[0_6px_18px_-8px_rgba(34,197,94,0.6)]',
     danger: 'bg-white/[0.04] text-white/55 ring-1 ring-white/10 hover:bg-apex-red/15 hover:text-apex-red hover:ring-apex-red/30',
-    accent: 'bg-apex-brand/15 text-apex-brand ring-1 ring-apex-brand/30 hover:bg-apex-brand/25',
+    accent: 'bg-gradient-to-b from-apex-brand-hi to-apex-brand text-white font-semibold ring-1 ring-apex-brand-lo shadow-[0_6px_18px_-8px_rgba(242,85,90,0.55)] hover:to-apex-brand-hi',
   };
   return (
     <button
@@ -179,6 +181,63 @@ export function NumberInput({ value, onChange, suffix, step, min, max, disabled 
       {suffix && <span className="text-[11px] text-white/35">{suffix}</span>}
     </span>
   );
+}
+
+// ── Gauge — live limit vs. hard cap, with cap tick ───────────────────────────
+export function Gauge({ label, valueText, capText, value, cap, status }: {
+  label: ReactNode; valueText: ReactNode; capText: ReactNode; value: number; cap: number; status?: 'safe' | 'warn' | 'breach';
+}) {
+  const ratio = cap > 0 ? value / cap : 0;
+  const st = status ?? (ratio >= 1 ? 'breach' : ratio >= 0.8 ? 'warn' : 'safe');
+  const fill = st === 'breach' ? 'bg-apex-red' : st === 'warn' ? 'bg-apex-amber' : 'bg-apex-green';
+  const tone = st === 'breach' ? 'text-apex-red' : st === 'warn' ? 'text-apex-amber' : 'text-white/70';
+  return (
+    <div>
+      <div className="flex items-baseline justify-between gap-3 mb-2">
+        <span className="text-[12px] text-white/50">{label}</span>
+        <span className={clsx('text-[12px] tnum font-medium', tone)}>{valueText} <span className="text-white/30">/ {capText}</span></span>
+      </div>
+      <div className="relative h-1.5 w-full rounded-full bg-apex-bg-2 ring-1 ring-white/[0.06] overflow-hidden">
+        <div className={clsx('absolute inset-y-0 left-0 rounded-full transition-all duration-500', fill)} style={{ width: `${Math.min(Math.max(ratio, 0), 1) * 100}%` }} />
+      </div>
+    </div>
+  );
+}
+
+// ── Segmented control ────────────────────────────────────────────────────────
+export function Segmented<T extends string>({ options, value, onChange, className }: {
+  options: { label: ReactNode; value: T }[]; value: T; onChange: (v: T) => void; className?: string;
+}) {
+  return (
+    <div className={clsx('inline-flex gap-0.5 rounded-xl bg-apex-bg-2 ring-1 ring-white/[0.07] p-0.5', className)}>
+      {options.map(o => (
+        <button
+          key={o.value}
+          onClick={() => onChange(o.value)}
+          className={clsx(
+            'rounded-lg px-3 py-1.5 text-[12px] font-medium transition-all',
+            o.value === value ? 'bg-white/[0.08] text-white shadow-card' : 'text-white/45 hover:text-white/75',
+          )}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ── Tier & direction chips ───────────────────────────────────────────────────
+const TIER_TONE: Record<number, string> = { 1: 'text-apex-green', 2: 'text-apex-blue', 3: 'text-apex-amber', 4: 'text-white/45' };
+export function TierChip({ tier }: { tier: number }) {
+  return <span className={clsx('inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-semibold tnum ring-1 ring-current', TIER_TONE[tier] ?? 'text-white/45')}>T{tier}</span>;
+}
+export function DirChip({ dir }: { dir: 'YES' | 'NO' }) {
+  return <span className={clsx('inline-flex items-center rounded-md px-1.5 py-0.5 text-[11px] font-bold tnum', dir === 'YES' ? 'text-apex-green bg-apex-green/10' : 'text-apex-red bg-apex-red/10')}>{dir}</span>;
+}
+
+// ── Skeleton ─────────────────────────────────────────────────────────────────
+export function Skeleton({ className }: { className?: string }) {
+  return <div className={clsx('rounded-md bg-gradient-to-r from-apex-surface-2 via-apex-surface-3 to-apex-surface-2 bg-[length:200%_100%] animate-shimmer', className)} />;
 }
 
 export function pnlColor(n: number | null | undefined): string {

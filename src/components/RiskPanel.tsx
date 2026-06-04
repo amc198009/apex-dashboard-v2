@@ -2,14 +2,12 @@
 
 import clsx from 'clsx';
 import { useApex } from '../lib/store';
-import { Card, SectionTitle, ProgressBar } from './ui';
+import { Card, SectionTitle, Gauge } from './ui';
 import { RISK, utilization, utilStatus } from '../lib/risk';
 import { totalExposure, exposureByCategory, isOpen } from '../lib/analytics';
 import { usd, pct } from '../lib/format';
 
 // Live monitor of the hard risk constraints vs. current portfolio state.
-const tone = (s: 'safe' | 'warn' | 'breach') =>
-  s === 'breach' ? 'text-apex-red' : s === 'warn' ? 'text-apex-amber' : 'text-white/70';
 
 type Row =
   | { kind: 'pct'; label: string; pct: number; usdc: number; cap: number }
@@ -43,45 +41,33 @@ export function RiskPanel({ compact = false }: { compact?: boolean }) {
       <div className="space-y-4">
         {rows.map(r => {
           if (r.kind === 'count') {
-            const status = utilStatus(utilization(r.value, r.cap));
             return (
-              <div key={r.label}>
-                <div className="flex justify-between text-[12px] mb-2">
-                  <span className="text-white/50">{r.label}</span>
-                  <span className={clsx('tnum font-medium', tone(status))}>
-                    {r.value} <span className="text-white/30">/ {r.cap}</span>
-                  </span>
-                </div>
-                <ProgressBar value={r.value} max={r.cap} status={status} />
-              </div>
+              <Gauge key={r.label} label={r.label} value={r.value} cap={r.cap}
+                valueText={`${r.value}`} capText={`${r.cap}`}
+                status={utilStatus(utilization(r.value, r.cap))} />
             );
           }
           // Percentage rows need a bankroll/wallet denominator. Without one we
           // must NOT show a false "safe 0%" — surface the absolute exposure and
           // an indeterminate (amber) gauge instead.
           const hasExposure = r.usdc > 0;
-          const indeterminate = !hasDenominator && hasExposure;
-          const status = indeterminate ? 'warn' : utilStatus(utilization(r.pct, r.cap));
-          return (
-            <div key={r.label}>
-              <div className="flex justify-between text-[12px] mb-2">
-                <span className="text-white/50">{r.label}</span>
-                <span className={clsx('tnum font-medium', tone(status))}>
-                  {hasDenominator
-                    ? <>{pct(r.pct, 1)} <span className="text-white/25">/ {pct(r.cap, 0)}</span></>
-                    : hasExposure
-                      ? <>{usd(r.usdc)} <span className="text-apex-amber/70">· bankroll n/a</span></>
-                      : <>{pct(0, 1)} <span className="text-white/25">/ {pct(r.cap, 0)}</span></>}
-                </span>
-              </div>
-              {indeterminate ? (
+          if (!hasDenominator && hasExposure) {
+            return (
+              <div key={r.label}>
+                <div className="flex items-baseline justify-between gap-3 mb-2 text-[12px]">
+                  <span className="text-white/50">{r.label}</span>
+                  <span className="tnum font-medium text-apex-amber">{usd(r.usdc)} <span className="text-apex-amber/70">· bankroll n/a</span></span>
+                </div>
                 <div className="h-1.5 w-full rounded-full bg-apex-amber/15 overflow-hidden">
                   <div className="h-full w-1/3 rounded-full bg-apex-amber/60 animate-pulse-soft" />
                 </div>
-              ) : (
-                <ProgressBar value={r.pct} max={r.cap} status={status} />
-              )}
-            </div>
+              </div>
+            );
+          }
+          return (
+            <Gauge key={r.label} label={r.label} value={r.pct} cap={r.cap}
+              valueText={pct(r.pct, 1)} capText={pct(r.cap, 0)}
+              status={utilStatus(utilization(r.pct, r.cap))} />
           );
         })}
       </div>
