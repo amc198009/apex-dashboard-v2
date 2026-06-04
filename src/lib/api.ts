@@ -7,7 +7,10 @@ export const SSE_ENABLED = ['1', 'true', 'yes'].includes((process.env.NEXT_PUBLI
 export const STREAM_URL = `${BASE}/stream`;
 
 async function apexFetch<T>(path: string, opts?: RequestInit): Promise<T> {
-  const headers: Record<string, string> = { 'Content-Type': 'application/json', ...(opts?.headers as Record<string, string>) };
+  // Keep GETs as "simple" CORS requests (no Content-Type / Authorization unless
+  // needed) so they don't trigger a preflight the backend might not answer.
+  const headers: Record<string, string> = { ...(opts?.headers as Record<string, string> | undefined) };
+  if (opts?.body) headers['Content-Type'] = 'application/json';
   if (API_KEY) headers['Authorization'] = `Bearer ${API_KEY}`;
   const res = await fetch(`${BASE}${path}`, {
     cache: 'no-store',
