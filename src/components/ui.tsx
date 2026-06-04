@@ -80,7 +80,7 @@ export function Button({ children, onClick, disabled, variant = 'ghost', classNa
     ghost: 'bg-white/[0.04] text-white/70 ring-1 ring-white/10 hover:bg-white/[0.08] hover:text-white',
     approve: 'bg-apex-green text-[#062b14] font-semibold hover:bg-apex-green/90 shadow-[0_6px_18px_-8px_rgba(34,197,94,0.6)]',
     danger: 'bg-white/[0.04] text-white/55 ring-1 ring-white/10 hover:bg-apex-red/15 hover:text-apex-red hover:ring-apex-red/30',
-    accent: 'bg-apex-red/15 text-apex-red ring-1 ring-apex-red/30 hover:bg-apex-red/25',
+    accent: 'bg-apex-brand/15 text-apex-brand ring-1 ring-apex-brand/30 hover:bg-apex-brand/25',
   };
   return (
     <button

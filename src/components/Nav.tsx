@@ -49,7 +49,7 @@ export function Nav() {
                   active ? 'bg-white/[0.07] text-white ring-1 ring-white/10' : 'text-white/45 hover:text-white/85 hover:bg-white/[0.04]',
                 )}
               >
-                <Icon className={clsx('h-[18px] w-[18px] transition-colors', active ? 'text-apex-red' : 'text-white/40 group-hover:text-white/70')} />
+                <Icon className={clsx('h-[18px] w-[18px] transition-colors', active ? 'text-apex-brand' : 'text-white/40 group-hover:text-white/70')} />
                 {l.label}
                 {l.href === '/' && summary.pending > 0 && (
                   <span className="ml-auto grid h-5 min-w-5 place-items-center rounded-full bg-apex-amber px-1.5 text-[11px] font-semibold text-[#2a1c00]">{summary.pending}</span>
@@ -98,7 +98,7 @@ export function Nav() {
               href={l.href}
               className={clsx('relative flex flex-col items-center justify-center gap-1 py-2.5 text-[10px] font-medium transition-colors', active ? 'text-white' : 'text-white/45')}
             >
-              <Icon className={clsx('h-[20px] w-[20px]', active ? 'text-apex-red' : 'text-white/45')} />
+              <Icon className={clsx('h-[20px] w-[20px]', active ? 'text-apex-brand' : 'text-white/45')} />
               {l.label}
               {l.href === '/' && summary.pending > 0 && (
                 <span className="absolute top-1.5 right-1/2 translate-x-4 grid h-4 min-w-4 place-items-center rounded-full bg-apex-amber px-1 text-[9px] font-semibold text-[#2a1c00]">{summary.pending}</span>
@@ -112,7 +112,7 @@ export function Nav() {
 }
 
 function BrandMark() {
-  return <span className="grid h-8 w-8 place-items-center rounded-xl bg-apex-red/15 text-apex-red font-bold text-lg ring-1 ring-apex-red/25">A</span>;
+  return <span className="grid h-8 w-8 place-items-center rounded-xl bg-apex-brand/15 text-apex-brand font-bold text-lg ring-1 ring-apex-brand/25">A</span>;
 }
 
 // ── inline icons (stroke, inherit currentColor) ──────────────────────────────

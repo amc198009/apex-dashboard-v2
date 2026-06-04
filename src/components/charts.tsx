@@ -11,9 +11,10 @@ import {
 } from '../lib/analytics';
 import { usd, signedUsd } from '../lib/format';
 
-const GREEN = '#22C55E';
-const RED = '#F2555A';
-const AMBER = '#F59E0B';
+// Tuned to match the oklch design tokens (loss red distinct from brand coral).
+const GREEN = '#2FC56E';
+const RED = '#F0454B';
+const AMBER = '#F5A524';
 const GRID = 'rgba(255,255,255,0.05)';
 const AXIS = 'rgba(255,255,255,0.35)';
 
