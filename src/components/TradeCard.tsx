@@ -4,7 +4,7 @@ import { useState } from 'react';
 import clsx from 'clsx';
 import type { Trade } from '../lib/api';
 import { useApex } from '../lib/store';
-import { Button, StatusBadge, Spinner, pnlColor } from './ui';
+import { Button, HoldButton, StatusBadge, Spinner, pnlColor } from './ui';
 import { usd, signedUsd, pct, signedPct, cents, dateShort, durationUntil, shortId } from '../lib/format';
 
 const DIR_STYLE: Record<string, string> = {
@@ -64,13 +64,17 @@ export function TradeCard({ trade }: { trade: Trade }) {
             <StatusBadge status={trade.status} />
 
             {isPending && (
-              <div className="flex gap-2">
+              <div className="flex gap-2" onClick={e => e.stopPropagation()}>
                 <Button size="sm" variant="danger" disabled={busy} onClick={e => { e.stopPropagation(); cancel(trade.id); }}>
                   {busy ? <Spinner /> : '✕'}
                 </Button>
-                <Button size="sm" variant="approve" disabled={busy} onClick={e => { e.stopPropagation(); approve(trade.id); }}>
-                  {busy ? <><Spinner /> Executing</> : '✓ Approve'}
-                </Button>
+                <HoldButton
+                  busy={busy}
+                  disabled={busy}
+                  onConfirm={() => approve(trade.id)}
+                  idleLabel={<>✓ Hold to approve</>}
+                  busyLabel={<><Spinner /> Executing</>}
+                />
               </div>
             )}
           </div>
@@ -85,16 +89,16 @@ export function TradeCard({ trade }: { trade: Trade }) {
               <span className="text-[11px] font-medium text-white/45">Decision breakdown</span>
               <span className="text-[11px] text-white/40">Tier {trade.signalTier} · Kelly {trade.kellyFractionLabel}</span>
             </div>
-            <div className="flex items-center justify-between text-[11px] mb-1.5">
+            <div className="flex items-center justify-between text-[11px] mb-2">
               <span className="text-white/45">Net edge</span>
-              <span className="tnum text-apex-green">{signedPct(trade.netEdge)} <span className="text-white/30">/ min 7%</span></span>
+              <span className={clsx('tnum font-medium', trade.netEdge >= 0.1 ? 'text-apex-green' : 'text-apex-amber')}>{signedPct(trade.netEdge)}</span>
             </div>
-            <div className="relative h-1.5 rounded-full bg-white/[0.06] overflow-hidden mb-1">
-              <div className="h-full rounded-full bg-apex-green" style={{ width: `${Math.min(Math.max(trade.netEdge / 0.25, 0), 1) * 100}%` }} />
-            </div>
-            {/* 7% minimum-edge tick */}
-            <div className="relative h-0">
-              <span className="absolute -top-2.5 w-px h-2.5 bg-white/40" style={{ left: `${(0.07 / 0.25) * 100}%` }} />
+            {/* edge meter — fill vs. the 7% minimum-edge floor (scale 0–25%) */}
+            <div className="relative h-7 rounded-lg bg-apex-bg-2 ring-1 ring-white/[0.06] overflow-hidden">
+              <div className="absolute inset-y-0 left-0 rounded-r-lg bg-gradient-to-r from-apex-green/50 to-apex-green transition-all duration-500"
+                style={{ width: `${Math.min(Math.max(trade.netEdge / 0.25, 0.03), 1) * 100}%` }} />
+              <div className="absolute inset-y-0 w-0.5 bg-apex-amber z-[2]" style={{ left: `${(0.07 / 0.25) * 100}%` }} />
+              <span className="absolute bottom-0.5 text-[9px] tnum text-apex-amber z-[2]" style={{ left: `${(0.07 / 0.25) * 100}%`, transform: 'translateX(4px)' }}>7% floor</span>
             </div>
             <div className="grid grid-cols-3 gap-3 mt-3">
               <Stat k="Model prob" v={pct(trade.estimatedProbability)} />

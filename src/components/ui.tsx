@@ -5,6 +5,7 @@
 // Component APIs are stable so all views inherit the new look automatically.
 
 import clsx from 'clsx';
+import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { TradeStatus } from '../lib/api';
 
@@ -118,6 +119,64 @@ export function ProgressBar({ value, max, status = 'safe', label }: {
 export function Spinner({ className }: { className?: string }) {
   return <span className={clsx('inline-block animate-spin', className)}>◌</span>;
 }
+
+// ── Hold-to-approve — press & hold to confirm an irreversible action ──────────
+export function HoldButton({ onConfirm, holdMs = 650, disabled, busy, idleLabel, busyLabel, className }: {
+  onConfirm: () => void; holdMs?: number; disabled?: boolean; busy?: boolean;
+  idleLabel: ReactNode; busyLabel?: ReactNode; className?: string;
+}) {
+  const [progress, setProgress] = useState(0);
+  const holding = useRef(false);
+  const startAt = useRef(0);
+  const raf = useRef<number | null>(null);
+
+  const stop = () => {
+    holding.current = false;
+    if (raf.current) cancelAnimationFrame(raf.current);
+    raf.current = null;
+    setProgress(0);
+  };
+  useEffect(() => () => { if (raf.current) cancelAnimationFrame(raf.current); }, []);
+
+  const tick = () => {
+    if (!holding.current) return;
+    const p = Math.min((performance.now() - startAt.current) / holdMs, 1);
+    setProgress(p);
+    if (p >= 1) { stop(); onConfirm(); return; }
+    raf.current = requestAnimationFrame(tick);
+  };
+  const begin = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    if (disabled || busy || holding.current) return;
+    holding.current = true;
+    startAt.current = performance.now();
+    raf.current = requestAnimationFrame(tick);
+  };
+
+  return (
+    <button
+      type="button"
+      disabled={disabled || busy}
+      onPointerDown={begin}
+      onPointerUp={stop}
+      onPointerLeave={stop}
+      onPointerCancel={stop}
+      onKeyDown={e => { if (e.key === ' ' || e.key === 'Enter') begin(e); }}
+      onKeyUp={stop}
+      aria-label="Hold to approve"
+      className={clsx(
+        'relative inline-flex items-center gap-1.5 overflow-hidden rounded-xl text-[12px] px-3.5 py-2 font-semibold select-none touch-none transition-all',
+        'bg-apex-green/15 text-apex-green ring-1 ring-apex-green/40 hover:bg-apex-green/25 active:scale-[0.98]',
+        'disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100',
+        className,
+      )}
+    >
+      <span className="absolute inset-y-0 left-0 bg-apex-green/35" style={{ width: `${progress * 100}%`, transition: progress === 0 ? 'width 140ms ease-out' : 'none' }} />
+      <span className="relative z-[1] inline-flex items-center gap-1.5">{busy ? (busyLabel ?? idleLabel) : idleLabel}</span>
+    </button>
+  );
+}
+
 
 export function ConnectionDot({ online }: { online: boolean }) {
   return (
