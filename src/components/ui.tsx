@@ -228,16 +228,23 @@ export function Field({ label, hint, children }: { label: string; hint?: string;
 export function NumberInput({ value, onChange, suffix, step, min, max, disabled }: {
   value: number; onChange: (v: number) => void; suffix?: string; step?: number; min?: number; max?: number; disabled?: boolean;
 }) {
+  const s = step ?? 1;
+  const clamp = (n: number) => Math.min(Math.max(n, min ?? -Infinity), max ?? Infinity);
+  const bump = (dir: 1 | -1) => onChange(clamp((Number.isFinite(value) ? value : 0) + dir * s));
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-xl bg-white/[0.04] ring-1 ring-white/10 px-3 py-1.5 focus-within:ring-white/25">
+    <span className="inline-flex items-center gap-1 rounded-xl bg-white/[0.04] ring-1 ring-white/10 pl-3 pr-1.5 py-1 focus-within:ring-white/25">
       <input
         type="number"
         value={Number.isFinite(value) ? value : ''}
-        step={step} min={min} max={max} disabled={disabled}
+        step={s} min={min} max={max} disabled={disabled}
         onChange={e => onChange(e.target.value === '' ? NaN : Number(e.target.value))}
-        className="w-20 bg-transparent text-right text-[13px] text-white tnum outline-none disabled:opacity-50"
+        className="w-16 bg-transparent text-right text-[13px] text-white tnum outline-none disabled:opacity-50 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
       />
-      {suffix && <span className="text-[11px] text-white/35">{suffix}</span>}
+      {suffix && <span className="text-[11px] text-white/35 w-3">{suffix}</span>}
+      <span className="flex flex-col">
+        <button type="button" tabIndex={-1} disabled={disabled} onClick={() => bump(1)} className="grid h-3.5 w-5 place-items-center rounded text-[8px] text-white/40 hover:text-white hover:bg-white/[0.06] disabled:opacity-30">▲</button>
+        <button type="button" tabIndex={-1} disabled={disabled} onClick={() => bump(-1)} className="grid h-3.5 w-5 place-items-center rounded text-[8px] text-white/40 hover:text-white hover:bg-white/[0.06] disabled:opacity-30">▼</button>
+      </span>
     </span>
   );
 }

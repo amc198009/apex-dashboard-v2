@@ -73,18 +73,41 @@ export default function MarketsPage() {
           <StatTile
             label="Qualified"
             value={num(qualified)}
-            accent="green"
+            accent="text-apex-green"
           />
           <StatTile
             label="Disqualified"
             value={num(disqualified)}
-            accent="red"
+            accent="text-apex-red"
           />
           <StatTile
             label="Qualify rate"
             value={qualifyRate}
           />
         </div>
+
+        {/* Scan funnel — proportional bars (renders once a scan returns counts) */}
+        {typeof scanned === 'number' && scanned > 0 && (
+          <Card className="p-5">
+            <SectionTitle>Scan funnel</SectionTitle>
+            <div className="space-y-3">
+              {[
+                { label: 'Scanned', n: scanned, color: 'bg-apex-blue/60' },
+                { label: 'Qualified', n: qualified ?? 0, color: 'bg-apex-green' },
+                { label: 'Disqualified', n: disqualified ?? 0, color: 'bg-apex-red/80' },
+              ].map(r => (
+                <div key={r.label} className="grid grid-cols-[110px_1fr_56px] items-center gap-3">
+                  <span className="text-[12px] text-white/55">{r.label}</span>
+                  <div className="h-6 rounded-lg bg-apex-bg-2 ring-1 ring-white/[0.06] overflow-hidden">
+                    <div className={`h-full rounded-lg transition-all duration-500 ${r.color}`}
+                      style={{ width: `${Math.min((r.n / scanned) * 100, 100)}%` }} />
+                  </div>
+                  <span className="text-right text-[12px] font-medium tnum text-white/80">{num(r.n)}</span>
+                </div>
+              ))}
+            </div>
+          </Card>
+        )}
 
         {/* Filter Criteria Card */}
         <Card className="p-5">
